@@ -1,0 +1,23 @@
+---
+title: "README"
+author: "Chang Yu Wang, Vita Miao, Yunxuan Wang"
+date: "23/07/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## README
+### Introduction
+This is a repo for Monash's Bachelor of Computer Science Final Year project, specialising in Data Science. It aims to build a robust machine learning model in order to aid the diagnosis of coronary heart disease through building many strong individual models, and subsequently combining these into many hybrid models. The best performing result will be provided as an API.
+
+### Technology Stack
+### Requirements
+### Installation
+### Operation
+### Preview
+### Screenshots
+### Authours
+### Appendix
