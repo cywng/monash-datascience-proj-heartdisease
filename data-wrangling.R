@@ -14,10 +14,16 @@ cad.df$Function.Class <- as.numeric(cad.df$Function.Class == 0)
 
 for(i in colnames(cad.df)) ##TODO: this works for indexing via $ as it is a char, but not for indexing using [] as it is a dataframe.
 {
-  if(isTRUE(all.equal(as.vector(range(cad.df[i])), c("N","Y"))))
+  if(isTRUE(all.equal(as.vector(range(cad.df[,i])), c("N","Y"))))
   {
     print(i)
-    #cad.df[i] <- ifelse(cad.df[i]=='Y',1,0)
+    cad.df[,i] <- ifelse(cad.df[,i]=='Y',1,0)
   }
 }
+
+#Now we have to deal with BBB, and the categorical VHD.
+
+#Finally we can normalise the data
+
+
 
