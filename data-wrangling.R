@@ -2,7 +2,6 @@
 
 library(xlsx)
 cad.df <- read.xlsx("Z-Alizadeh sani dataset.xlsx", 1, header=TRUE)
-cad.df.og = cad.df #copy for comparison, to be deleted after
 #This data set has no NA's or missing values.
 
 head(cad.df)
@@ -37,4 +36,9 @@ cad.df$Cath <- ifelse(cad.df$Cath =='Cad',1,0)
 
 #Finally we can normalise the data, as some formulas are optimised for euclidian distance
 
+#Here are some resources to read, as this will depend on the method used
+#Main resource, note this is in python. 
+  #https://towardsdatascience.com/normalization-vs-standardization-quantitative-analysis-a91e8a79cebf
+#Reference for different scaling methods
+  #https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html#sphx-glr-auto-examples-preprocessing-plot-all-scaling-py
 
