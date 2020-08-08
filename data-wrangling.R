@@ -18,7 +18,7 @@ cad.df$RBBB <- as.factor(ifelse(cad.df$BBB == "RBBB",1,-1))
 
 cad.df$VHD.Mild <- as.factor(ifelse(cad.df$VHD == 'mild',1,-1))
 cad.df$VHD.Moderate <- as.factor(ifelse(cad.df$VHD == 'Moderate',1,-1))
-cad.df$VHD.Severe <- ifelse(cad.df$VHD == 'Severe',1,-1)
+cad.df$VHD.Severe <- as.factor(ifelse(cad.df$VHD == 'Severe',1,-1))
 
 cad.df$Region.RWMA1 <- as.factor(ifelse(cad.df$Region.RWMA == 1,1,-1))
 cad.df$Region.RWMA2 <- as.factor(ifelse(cad.df$Region.RWMA == 2,1,-1))
@@ -26,6 +26,7 @@ cad.df$Region.RWMA3 <- as.factor(ifelse(cad.df$Region.RWMA == 3,1,-1))
 cad.df$Region.RWMA4 <- as.factor(ifelse(cad.df$Region.RWMA == 4,1,-1))
 
 cad.df$Sex <- as.factor(ifelse(cad.df$Sex == 'Male', 1, -1))
+
 
 #Remove old variables, as well as Exertional.CP, as all entries are N
 cad.df = subset(cad.df, select=-c(Exertional.CP,VHD,BBB,Function.Class, Region.RWMA))
@@ -46,7 +47,7 @@ for(i in colnames(cad.df))
 
 
 #Finally change the supervised variable (Cath) from "Cad" "Normal" to 1 0, respectively
-cad.df$Cath <- ifelse(cad.df$Cath =='Cad',1,-1)
+cad.df$Cath <- as.factor(ifelse(cad.df$Cath =='Cad',1,-1))
 save(cad.df, file = "caddata.RData")
 
 #We can now normalise the data as required, as some methehods are optimised for euclidean distance
