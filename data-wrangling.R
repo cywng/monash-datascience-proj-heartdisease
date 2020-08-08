@@ -25,6 +25,8 @@ cad.df$Region.RWMA2 <- ifelse(cad.df$Region.RWMA == 2,1,-1)
 cad.df$Region.RWMA3 <- ifelse(cad.df$Region.RWMA == 3,1,-1)
 cad.df$Region.RWMA4 <- ifelse(cad.df$Region.RWMA == 4,1,-1)
 
+cad.df$Sex <- ifelse(cad.df$Sex == 'Male', 1, -1)
+
 #Remove old variables, as well as Exertional.CP, as all entries are N
 cad.df = subset(cad.df, select=-c(Exertional.CP,VHD,BBB,Function.Class, Region.RWMA))
 
