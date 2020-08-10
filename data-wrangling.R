@@ -47,12 +47,11 @@ for(i in colnames(cad.df))
 }
 
 #====Extra: Remove features based on high correlation====
-df1 <- as.data.frame(lapply(cad.df, function(x) if(is.factor(x)){
-  as.numeric(x)
-} else x))
+#Result: colums 2 and 18 removed.
+df1 <- Filter(is.numeric, cad.df)
 correlationMat <- cor(df1[,-51]) #Exclude target heart disease
 highlyCorrelated <- findCorrelation(correlationMat, cutoff=0.70)
-print(highlyCorrelated) #We've chosen the cutoff to be 0.7 as that is a common threshold for 'highly correlated'
+#We've chosen the cutoff to be 0.7 as that is a common threshold for 'highly correlated'
 #Source: https://www.westga.edu/academics/research/vrc/assets/docs/scatterplots_and_correlation_notes.pdf
 
 cad.df = subset(cad.df, select=-as.numeric(highlyCorrelated))
