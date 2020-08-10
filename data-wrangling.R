@@ -1,8 +1,10 @@
 # Data wrangling
 # Note the presence or lack of heart disease is the 'Cath' feature, with 1 for yes and 0 for no.
 library(xlsx)
+library(caret)
 cad.df <- read.xlsx("Z-Alizadeh sani dataset.xlsx", 1, header=TRUE)
 #This data set has no NA's or missing values.
+#====Categorical Data====
 #Here we see that there are some categorical data. We create dummy variables for them all.
 
 #Note: This results in multicollinearity in our dataset and so we won't
@@ -25,9 +27,8 @@ cad.df$Region.RWMA2 <- as.factor(ifelse(cad.df$Region.RWMA == 2,1,-1))
 cad.df$Region.RWMA3 <- as.factor(ifelse(cad.df$Region.RWMA == 3,1,-1))
 cad.df$Region.RWMA4 <- as.factor(ifelse(cad.df$Region.RWMA == 4,1,-1))
 
+#====Boolean strings to factosr====
 cad.df$Sex <- as.factor(ifelse(cad.df$Sex == 'Male', 1, -1))
-
-
 #Remove old variables, as well as Exertional.CP, as all entries are N
 cad.df = subset(cad.df, select=-c(Exertional.CP,VHD,BBB,Function.Class, Region.RWMA))
 
@@ -45,16 +46,26 @@ for(i in colnames(cad.df))
   }
 }
 
+#====Extra: Remove features based on high correlation====
+df1 <- as.data.frame(lapply(cad.df, function(x) if(is.factor(x)){
+  as.numeric(x)
+} else x))
+correlationMat <- cor(df1[,-51]) #Exclude target heart disease
+highlyCorrelated <- findCorrelation(correlationMat, cutoff=0.70)
+print(highlyCorrelated) #We've chosen the cutoff to be 0.7 as that is a common threshold for 'highly correlated'
+#Source: https://www.westga.edu/academics/research/vrc/assets/docs/scatterplots_and_correlation_notes.pdf
+
+cad.df = subset(cad.df, select=-as.numeric(highlyCorrelated))
 
 #Finally change the supervised variable (Cath) from "Cad" "Normal" to 1 0, respectively
 cad.df$Cath <- as.factor(ifelse(cad.df$Cath =='Cad',1,-1))
 save(cad.df, file = "caddata.RData")
 
+rm(list=ls())
 #We can now normalise the data as required, as some methehods are optimised for euclidean distance
 
 #Here are some resources to read, as this will depend on the method used
 #Main resource, note this is in python. 
-  #https://towardsdatascience.com/normalization-vs-standardization-quantitative-analysis-a91e8a79cebf
+#https://towardsdatascience.com/normalization-vs-standardization-quantitative-analysis-a91e8a79cebf
 #Reference for different scaling methods
-  #https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html#sphx-glr-auto-examples-preprocessing-plot-all-scaling-py
-
+#https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html#sphx-glr-auto-examples-preprocessing-plot-all-scaling-py

@@ -7,4 +7,7 @@ df1 <- as.data.frame(lapply(cad.df, function(x) if(is.numeric(x)){
   scale(x, center=TRUE, scale=TRUE)
   } else x))
 
-model.svm = svm(Cath~, data = df1)
+svm.model = svm(Cath~., data = df1[101:303,], cost = 100, gamma = 1)
+svm.pred = predict(svm.model, df1[1:100,])
+
+table(pred = svm.pred, true = df1[1:100,])
