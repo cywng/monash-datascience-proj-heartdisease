@@ -1,6 +1,9 @@
 #LDA and QDA assume Gaussian prior on all features. Does not really work given our data, 
 #would not be a good idea. Can apply to a subset of the data but we will avoid for now.
+#resource: https://rpubs.com/maulikpatel/229684
 library(MASS)
+#library(mlbench)
+library(caret)
 rm(list=ls())
 load(file = "caddata.RData")
 
@@ -15,8 +18,12 @@ df1 <- as.data.frame(lapply(cad.df, function(x) if(is.numeric(x)){
 set.seed(101)
 test.idx <- sample.int(n = nrow(df1), size = floor(0.30*nrow(df1)), replace = F)
 
-lda.model = lda(Cath~., data = df1[-test.idx,])
+lda.model = train(Cath ~ ., data=df1[-test.idx,], method="lda", trControl = trainControl(method = "cv"))
+#lda.model = lda(Cath~., data = df1[-test.idx,])
 lda.pred = predict(lda.model, df1[test.idx,])
+table(pred = lda.pred, true = df1[test.idx,]$Cath) 
 
-table(pred = lda.pred$class,true = df1[test.idx,]$Cath)
-#svm.model$coefs
+importance <- varImp(lda.model, scale=FALSE)
+# summarize importance
+print(importance)
+plot(importance)

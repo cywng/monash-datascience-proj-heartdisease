@@ -15,7 +15,7 @@ df1 <- as.data.frame(lapply(cad.df, function(x) if(is.numeric(x)){
 set.seed(101)
 test.idx <- sample.int(n = nrow(df1), size = floor(0.30*nrow(df1)), replace = F)
 
-lda.model = lda(Cath~., data = df1[-test.idx,])
+lda.model = stan_glm(Cath~., data = df1[-test.idx,])
 lda.pred = predict(lda.model, df1[test.idx,])
 
 table(pred = lda.pred$class,true = df1[test.idx,]$Cath)
