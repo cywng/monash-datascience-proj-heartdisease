@@ -46,6 +46,19 @@ for(i in colnames(cad.df))
   }
 }
 
+#====remove very imbalanced features (95%)====
+cad.df.balanced = cad.df
+for(i in colnames(cad.df.balanced)){
+  if(is.factor(cad.df.balanced[,i])){
+    datapoints = summary(cad.df.balanced[,i])
+    print(datapoints[1])
+    if(datapoints[1]/datapoints[2] > 20 | datapoints[2]/datapoints[1] > 20){
+      cad.df.balanced[,i] <- NULL
+    }
+  }
+}
+
+
 #====Extra: Remove features based on high correlation====
 #Result: colums 2 and 18 removed.
 df1 <- Filter(is.numeric, cad.df)
@@ -58,7 +71,7 @@ cad.df = subset(cad.df, select=-as.numeric(highlyCorrelated))
 
 #Finally change the supervised variable (Cath) from "Cad" "Normal" to 1 0, respectively
 cad.df$Cath <- as.factor(ifelse(cad.df$Cath =='Cad',1,-1))
-save(cad.df, file = "caddata.RData")
+save(cad.df, cad.df.balanced, file = "caddata.RData")
 
 rm(list=ls())
 #We can now normalise the data as required, as some methehods are optimised for euclidean distance

@@ -16,7 +16,7 @@ df1 <- as.data.frame(lapply(cad.df, function(x) if(is.numeric(x)){
 #need to feature select
 
 set.seed(101)
-test.idx <- sample.int(n = nrow(df1), size = floor(0.30*nrow(df1)), replace = F)
+test.idx <- sample.int(n = nrow(df1), size = floor(0.20*nrow(df1)), replace = F) #use caret
 
 lda.model = train(Cath ~ ., data=df1[-test.idx,], method="lda", trControl = trainControl(method = "cv"))
 #lda.model = lda(Cath~., data = df1[-test.idx,])
