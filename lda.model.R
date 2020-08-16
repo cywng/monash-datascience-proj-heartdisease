@@ -27,3 +27,11 @@ importance <- varImp(lda.model, scale=FALSE)
 # summarize importance
 print(importance)
 plot(importance)
+
+control <- rfeControl(functions=rfFuncs, method="cv", number=10)
+#results <- rfe(df1[,-49], df1$Cath, sizes=c(1:60), rfeControl=control) #takes a long time, care
+print(results)
+# list the chosen features
+predictors(results)
+# plot the results
+plot(results, type=c("g", "o"))
