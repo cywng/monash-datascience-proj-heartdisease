@@ -1,37 +1,47 @@
-#LDA and QDA assume Gaussian prior on all features. Does not really work given our data, 
+#LDA assumes Gaussian prior on all features. Does not really work given our data, 
 #would not be a good idea. Can apply to a subset of the data but we will avoid for now.
 #resource: https://rpubs.com/maulikpatel/229684
 library(MASS)
-#library(mlbench)
 library(caret)
 rm(list=ls())
+set.seed(101)
 load(file = "caddata.RData")
 
-#Standardise non-boolean features
-df1 <- as.data.frame(lapply(cad.df, function(x) if(is.numeric(x)){
-  scale(x, center=TRUE, scale=TRUE)
+#convert factors to numerical again because LDA does not like factors.
+df1 <- as.data.frame(lapply(cad.df.balanced, function(x) if(is.factor(x)){
+  as.numeric(x)-1
 } else x))
+df1$Cath <- as.factor(df1$Cath)
 
-#QDA gives error Error in qda.default(x, grouping, ...) : some group is too small for 'qda'
-#need to feature select
+#Separate into training and test data
 
-set.seed(101)
-test.idx <- sample.int(n = nrow(df1), size = floor(0.20*nrow(df1)), replace = F) #use caret
+index <- sample.int(n = nrow(df1), size = floor(0.80*nrow(df1)), replace = F) #use caret
+train.df = df1[index,]
+test.df = df1[-index,]
 
-lda.model = train(Cath ~ ., data=df1[-test.idx,], method="lda", trControl = trainControl(method = "cv"))
-#lda.model = lda(Cath~., data = df1[-test.idx,])
-lda.pred = predict(lda.model, df1[test.idx,])
-table(pred = lda.pred, true = df1[test.idx,]$Cath) 
+#Feature selection using Recursive feature elimination on LDA - converted  
+control <- rfeControl(functions=ldaFuncs, method="cv")
+lda.features <- rfe(df1[,names(df1) != c("Cath")], df1$Cath, sizes=c(1:60), rfeControl=control) #takes a long time, care
+plot(lda.features, type=c("g", "o"))
+predictors(lda.features)
+#20 features selected
+#[1] "Typical.Chest.Pain" "Age"                "Atypical"           "EF.TTE"            
+#[5] "HTN"                "FBS"                "ESR"                "DM"                
+#[9] "Tinversion"         "TG"                 "K"                  "PR"                
+#[13] "Lymph"              "Neut"               "VHD.Mild"           "Dyspnea"           
+#[17] "St.Depression"      "Nonanginal"         "Region.RWMA2"       "Na"     
+#[21] "BUN" 
 
-importance <- varImp(lda.model, scale=FALSE)
-# summarize importance
-print(importance)
-plot(importance)
 
-control <- rfeControl(functions=rfFuncs, method="cv", number=10)
-#results <- rfe(df1[,-49], df1$Cath, sizes=c(1:60), rfeControl=control) #takes a long time, care
-print(results)
-# list the chosen features
-predictors(results)
-# plot the results
-plot(results, type=c("g", "o"))
+#Train and test the model
+lda.model = train(train.df[lda.features$optVariables], train.df$Cath, method="lda", trControl = trainControl(method = "cv"))
+lda.pred = predict(lda.model, test.df[lda.features$optVariables])
+table(pred = lda.pred, true = test.df$Cath) 
+#table:true  (test accuracy .85, train accuracy .88)
+#pred  0  1
+#0    12  4
+#1     5 40
+
+#Save resultant model
+save(lda.model,lda.features, file = "LDAmodel.RData")
+#we only really need lda.model
