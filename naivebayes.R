@@ -11,7 +11,7 @@ df=as.data.frame(cad.df.balanced)
 
 set.seed(123)
 rcontrol <- rfeControl(functions = nbFuncs,method="repeatedcv")#, repeats=10,verbose = FALSE)
-result<-rfe(x=df[,c(1:42,44:54)],y=df[,43],sizes = c(1:42,44:54),rfeControl =rcontrol)
+result<-rfe(x=df[,c(1:42,44:54)],y=df[,43],sizes = c(1:54),rfeControl =rcontrol)
 print(result)
 predictors(result)
 result$fit
