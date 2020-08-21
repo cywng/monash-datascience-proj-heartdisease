@@ -1,6 +1,7 @@
 #Testing a bunch of feature selection algs.
 library(caret)
 library(klaR)
+library(RVenn)
 rm(list=ls())
 set.seed(123)
 load(file = "caddata.RData")
@@ -43,9 +44,20 @@ print(p2, split=c(1,2,2,2), more=TRUE)
 print(p3, split=c(2,1,2,2), more=TRUE)
 print(p4, split=c(2,2,2,2), more=TRUE)
 
-#====Check all for best within 3% accuracy.
+#====Check all for best within 3% accuracy.====
 
-pickSizeTolerance(lda.features$results,metric= "Accuracy",maximize = TRUE, tol = 1)
-pickSizeTolerance(lr.features$results,metric= "Accuracy",maximize = TRUE, tol = 1)
-pickSizeTolerance(rf.features$results,metric= "Accuracy",maximize = TRUE, tol = 1)
-pickSizeTolerance(nb.features$results,metric= "Accuracy",maximize = TRUE, tol = 1)
+lda.num <- pickSizeTolerance(lda.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)
+lr.num <- pickSizeTolerance(lr.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)
+rf.num <- pickSizeTolerance(rf.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)
+nb.num <- pickSizeTolerance(nb.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)
+
+#====Print out the variables====
+a=lda.features$optVariables#[1:lda.num]
+b=lr.features$optVariables#[1:lr.num]
+c=rf.features$optVariables#[1:rf.num]
+d=nb.features$optVariables#[1:nb.num]
+
+#====Intersections====
+var.dia = Venn(list(a,b,c,d))
+overlap(var.dia)
+               
