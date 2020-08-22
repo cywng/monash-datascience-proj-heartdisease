@@ -33,16 +33,24 @@ rf.features <- rfe(train.df[,names(df1) != c("Cath")], train.df$Cath, sizes=c(1:
 control <- rfeControl(functions=nbFuncs, method="cv")
 nb.features <- rfe(train.df[,names(df1) != c("Cath")], train.df$Cath, sizes=c(1:30), rfeControl=control)
 
+#====Tree====
+control <- rfeControl(functions=treebagFuncs, method="cv")
+tb.features <- rfe(train.df[,names(df1) != c("Cath")], train.df$Cath, sizes=c(1:30), rfeControl=control) 
+
+
+save(lda.features,tb.features,lr.features,rf.features,nb.features, file = "Featuresselected.RData")
 #====Plot all results====
 p1 <- plot(lda.features, type=c("g", "o"),main="LDA")
 p2 <- plot(lr.features, type=c("g", "o"),main="LogisticRegression")
 p3 <- plot(rf.features, type=c("g", "o"),main="RandForest")
 p4 <- plot(nb.features, type=c("g", "o"),main="NaiveBayes")
+p5 <- plot(tb.features, type=c("g", "o"),main="Treebag")
 
-print(p1, split=c(1,1,2,2), more=TRUE)
-print(p2, split=c(1,2,2,2), more=TRUE)
-print(p3, split=c(2,1,2,2), more=TRUE)
-print(p4, split=c(2,2,2,2), more=TRUE)
+print(p1, split=c(1,1,3,2), more=TRUE)
+print(p2, split=c(1,2,3,2), more=TRUE)
+print(p3, split=c(2,1,3,2), more=TRUE)
+print(p4, split=c(2,2,3,2), more=TRUE)
+print(p5, split=c(3,1,3,2))
 
 #====Check all for best within 3% accuracy.====
 
@@ -50,14 +58,18 @@ lda.num <- pickSizeTolerance(lda.features$results,metric= "Accuracy",maximize = 
 lr.num <- pickSizeTolerance(lr.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)
 rf.num <- pickSizeTolerance(rf.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)
 nb.num <- pickSizeTolerance(nb.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)
+tb.num <- pickSizeTolerance(tb.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)
 
 #====Print out the variables====
 a=lda.features$optVariables#[1:lda.num]
 b=lr.features$optVariables#[1:lr.num]
 c=rf.features$optVariables#[1:rf.num]
 d=nb.features$optVariables#[1:nb.num]
+e=tb.features$optVariables#[1:nb.num]
 
 #====Intersections====
-var.dia = Venn(list(a,b,c,d))
+var.dia = Venn(list(a,b,c,d,e))
 overlap(var.dia)
+
+save(ObjectToBeSaved, file = "Featuresselected.RData")
                
