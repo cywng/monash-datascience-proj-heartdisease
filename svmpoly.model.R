@@ -3,6 +3,7 @@ library(e1071)
 rm(list=ls())
 load(file = "caddata.RData")
 load(file = "Featuresselected.RData")
+set.seed(123)
 
 
 #for error "Error in { : task 1 failed - "argument 1 is not a vector"," change factor levels from 01 to NY, as FS encodes it into factor name

@@ -3,6 +3,7 @@ library(e1071)
 rm(list=ls())
 load(file = "caddata.RData")
 load(file = "Featuresselected.RData")
+set.seed(123)
 
 
 #for error "Error in { : task 1 failed - "argument 1 is not a vector"," change factor levels from 01 to NY, as FS encodes it into factor name
@@ -35,7 +36,7 @@ svmrad.model$bestTune
 
 svmrad.pred = predict(svmrad.model, newdata=test.df)
 #83% test accuracy
-#85% with C=1, sigma=0.05...
+#88.5% with C=5, sigma=0.01...
 
 confusionMatrix(svmrad.pred,test.df$Cath)
 save(svmrad.model,svmrad.features, file = "SVMradmodel.RData")
