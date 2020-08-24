@@ -38,7 +38,7 @@ control <- rfeControl(functions=treebagFuncs, method="cv")
 tb.features <- rfe(train.df[,names(df1) != c("Cath")], train.df$Cath, sizes=c(1:30), rfeControl=control) 
 
 
-save(lda.features,tb.features,lr.features,rf.features,nb.features, file = "Featuresselected.RData")
+save(train.df,test.df,lda.features,tb.features,lr.features,rf.features,nb.features, file = "Featuresselected.RData")
 #====Plot all results====
 p1 <- plot(lda.features, type=c("g", "o"),main="LDA")
 p2 <- plot(lr.features, type=c("g", "o"),main="LogisticRegression")
@@ -70,6 +70,3 @@ e=tb.features$optVariables#[1:nb.num]
 #====Intersections====
 var.dia = Venn(list(a,b,c,d,e))
 overlap(var.dia)
-
-save(ObjectToBeSaved, file = "Featuresselected.RData")
-               
