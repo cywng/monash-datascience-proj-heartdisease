@@ -12,6 +12,7 @@ load(file = "Featuresselected.RData") #import training and test data from the sh
 
 plot(lda.features, type=c("g", "o"))
 predictors(lda.features)
+
 #22 features selected
 #[1] "Typical.Chest.Pain" "Age"                "Atypical"           "FBS"                "HTN"                "DM"                
 #[7] "EF.TTE"             "K"                  "PR"                 "ESR"                "TG"                 "Tinversion"        
@@ -22,7 +23,8 @@ predictors(lda.features)
 #Train and test the model
 lda.model = train(train.df[lda.features$optVariables], train.df$Cath, method="lda", trControl = trainControl(method = "cv"))
 lda.pred = predict(lda.model, test.df[lda.features$optVariables])
-table(pred = lda.pred, true = test.df$Cath) 
+
+confusionMatrix(lda.pred,test.df$Cath)
 #table:true  (test accuracy .90, train accuracy .88
 #pred  0  1
 #0    14  3
