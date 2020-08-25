@@ -14,7 +14,6 @@ rcontrol <- rfeControl(functions = nbFuncs,method="cv")#, repeats=10,verbose = F
 result<-rfe(x=train[,c(1:42,44:54)],y=train[,43],sizes = c(1:54),rfeControl =rcontrol)
 predictors(result)
 
-
 train <- train[,c(predictors(result),"Cath")]
 test  <- test[,c(predictors(result),"Cath")]
 

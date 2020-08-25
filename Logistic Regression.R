@@ -1,7 +1,6 @@
 library(caret)
 library(rsample)
 library(glmnet) 
-
 rm(list=ls())
 load(file = "caddata.RData")
 df <- as.data.frame(lapply(cad.df.balanced, function(x) if(is.factor(x)){
