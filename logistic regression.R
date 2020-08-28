@@ -15,7 +15,6 @@ set.seed(123)
 train <- train.df[,c(predictors(lr.features),"Cath")]
 test  <- test.df[,c(predictors(lr.features),"Cath")]
 
-
 control <- trainControl(method="repeatedcv", number=10)
 
 #1.Penalized logictic regression
