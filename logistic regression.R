@@ -1,5 +1,5 @@
 library(caret)
-library(rsample)
+#library(rsample)
 library(glmnet) 
 rm(list=ls())
 load(file = "caddata.RData")
@@ -28,16 +28,16 @@ control <- trainControl(method="repeatedcv", number=10)
 #pred2=predict(train_model_ridge,test)
 
 #use glemnet for both ridge and lasso
-train_model<- train(Cath ~., data = train, method = "glmnet",tuneGrid = expand.grid(alpha = 0:1, lambda = seq(0.0001, 1, length = 10)), trControl = control)
-pred=predict(train_model,test)  
+#train_model<- train(Cath ~., data = train, method = "glmnet",tuneGrid = expand.grid(alpha = 0:1, lambda = seq(0.0001, 1, length = 10)), trControl = control)
+#pred=predict(train_model,test)    # 85%
 
 
 
 
 #2.doesn't use a penalty term:
-#train_model3<-train(Cath ~., data = train, method="glm", family = "binomial" ,trControl=control)
-#pred4=predict(train_model3,test) #-----low accuracy 
+train_model3<-train(Cath ~., data = train, method="glm", family = "binomial" ,trControl=control)
+pred4=predict(train_model3,test) #-----high accuracy   87%
 
 
 
-mean(pred== test$Cath)
+mean(pred4== test$Cath)
