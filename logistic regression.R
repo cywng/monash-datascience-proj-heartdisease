@@ -9,7 +9,6 @@ df <- as.data.frame(lapply(cad.df.balanced, function(x) if(is.factor(x)){
 } else x))
 df$Cath <- as.factor(df$Cath)
 
-
 set.seed(123)
 
 train <- train.df[,c(predictors(lr.features),"Cath")]
