@@ -25,7 +25,7 @@ lda.model = train(train.df[lda.features$optVariables], train.df$Cath, method="ld
 lda.pred = predict(lda.model, test.df[lda.features$optVariables])
 
 confusionMatrix(lda.pred,test.df$Cath)
-#table:true  (test accuracy .90, train accuracy .88
+#table:true  (test accuracy .89)
 #pred  0  1
 #0    14  3
 #1     3 40

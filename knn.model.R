@@ -30,7 +30,7 @@ confusionMatrix(knn.pred,test.df$Cath)
 save(knn.model,knn.features, file = "knnmodel.RData")
 
 #wildly fluctuating results 
-#knn.modelall <- train(Cath~., data=train.df, method = "knn3", trControl = train_control, preProcess = c("center","scale"), tuneLength = 10)
-#knn.modelall
-#knn.predall = predict(knn.modelall, newdata=test.df)
-#confusionMatrix(knn.predall,test.df$Cath)
+knn.modelall <- train(Cath~., data=train.df, method = "knn", trControl = train_control, preProcess = c("center","scale"), tuneLength = 10)
+knn.modelall
+knn.predall = predict(knn.modelall, newdata=test.df)
+confusionMatrix(knn.predall,test.df$Cath)
