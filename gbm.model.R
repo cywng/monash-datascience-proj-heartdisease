@@ -24,5 +24,5 @@ confusionMatrix(gbm.pred,test.df$Cath)
 #table:true  (test accuracy .87)
 
 #Save resultant model
-save(gbm.model, file = "gbmmodel.RData")
+save(gbm.model,gbm.features, file = "gbmmodel.RData")
 #we only really need gbm.model

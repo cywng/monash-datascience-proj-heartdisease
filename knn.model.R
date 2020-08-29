@@ -18,18 +18,22 @@ plot(knn.features, type=c("g", "o"))
 knn.features <- tb.features
 knn.num <- pickSizeTolerance(knn.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)   
 train_control <- trainControl(method="repeatedcv", number=10, repeats=10)
-form <- paste(knn.features$optVariables[1:knn.num], collapse ="+")
+
+#variables
+varselec <- row.names(importance$importance[c(importance$importance[,1]>0.57),])
+#form <- paste(knn.features$optVariables[1:knn.num], collapse ="+")
+form <- paste(varselec, collapse ="+")
 knn.model <- train(form=as.formula(paste("Cath ~ ",form,sep = "")), data=train.df, method = "knn", trControl = train_control, preProcess = c("center","scale"), tuneLength = 10)
 
 
 knn.model
-knn.pred = predict(knn.model, newdata=test.df)
+knn.pred = predict(knn.model, newdata=test.df[varselec])
 confusionMatrix(knn.pred,test.df$Cath)
 #Other results: .86 acc LDA
 #lr: .88 #nb .83 rf:87 tb:.85
 
 
-#Confusion Matrix and Statistics for using 2 featuresm Typical Chest pain, age, k=9
+#Confusion Matrix and Statistics for using 2 features Typical Chest pain, age, k=9
 #Reference
 #Prediction  N  Y
 #N 14  8

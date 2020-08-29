@@ -30,7 +30,7 @@ svmlin.model$bestTune
 
 
 
-svmlin.pred = predict(svmlin.model, newdata=test.df)
+svmlin.pred = predict(svmlin.model, newdata=test.df[svmlin.features$optVariables])
 #87% test accuracy
 
 confusionMatrix(svmlin.pred,test.df$Cath)

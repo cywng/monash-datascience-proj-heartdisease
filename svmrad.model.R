@@ -34,9 +34,8 @@ svmrad.model$bestTune
 
 
 
-svmrad.pred = predict(svmrad.model, newdata=test.df)
-#83% test accuracy
-#88.5% with C=5, sigma=0.01...
+svmrad.pred = predict(svmrad.model, newdata=test.df[svmrad.features$optVariables])
+#88.5% test accuracy
 
 confusionMatrix(svmrad.pred,test.df$Cath)
 save(svmrad.model,svmrad.features, file = "SVMradmodel.RData")

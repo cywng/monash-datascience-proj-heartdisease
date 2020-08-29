@@ -33,7 +33,7 @@ svmpoly.model$bestTune
 plot(svmpoly.model)
 
 
-svmpoly.pred = predict(svmpoly.model, newdata=test.df)
+svmpoly.pred = predict(svmpoly.model, newdata=test.df[svmpoly.features$optVariables])
 
 
 confusionMatrix(svmpoly.pred,test.df$Cath)
