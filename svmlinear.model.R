@@ -13,30 +13,26 @@ test.df$Cath <- as.factor(ifelse(test.df$Cath == 0,"N","Y"))
 
 #Source https://neerajkumar.org/writings/svm/#:~:text=Prescaling%2Fnormalization%2Fwhitening,are%20different%20types%20of%20whitening.)
 
-#====Polynominal Function====
+#====Radial Basis Function====
 control <- rfeControl(functions = caretFuncs, method="cv")
-#takes 1 hour
-svmpoly.features <- rfe(train.df[,names(train.df) != c("Cath")], train.df$Cath, sizes = c(1,5,10:25,30),rfeControl = control,method = "svmPoly")
+svmlin.features <- rfe(train.df[,names(train.df) != c("Cath")], train.df$Cath, sizes = c(1,5,10:25,30),rfeControl = control,method = "svmLinear")
 
-predictors(svmpoly.features)
-plot(svmpoly.features, type=c("g", "o"))
+predictors(svmlin.features)
+plot(svmlin.features, type=c("g", "o"))
 #25 features selected, but the results are very close. We take tol = 0.5% training accuracy.
-svmpoly.num <- pickSizeTolerance(svmpoly.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)   
+svmlin.num <- pickSizeTolerance(svmlin.features$results,metric= "Accuracy",maximize = TRUE, tol = 0.5)   
 
 # Set up Repeated k-fold Cross Validation
 train_control <- trainControl(method="repeatedcv", number=10, repeats=3)
-form <- paste(svmpoly.features$optVariables[1:svmpoly.num], collapse ="+")
-
-#This takes like 4 hours to run
-svmpoly.model <- train(form=as.formula(paste("Cath ~ ",form,sep = "")), data=train.df, method = "svmPoly", trControl = train_control, preProcess = c("center","scale"), tuneLength = 10)
-svmpoly.model$bestTune
-plot(svmpoly.model)
+form <- paste(svmlin.features$optVariables[1:svmlin.num], collapse ="+")
+svmlin.model <- train(form=as.formula(paste("Cath ~ ",form,sep = "")), data=train.df, method = "svmLinear", trControl = train_control,  tuneGrid = expand.grid(C=c(0.01,0.1,0.3,0.5,1,2,5)), preProcess = c("center","scale"), tuneLength = 10)
+svmlin.model$bestTune
 
 
-svmpoly.pred = predict(svmpoly.model, newdata=test.df[svmpoly.features$optVariables])
 
+svmlin.pred = predict(svmlin.model, newdata=test.df[svmlin.features$optVariables])
+#87% test accuracy
 
-confusionMatrix(svmpoly.pred,test.df$Cath)
-
-save(svmpoly.model,svmpoly.features, file = "svmpolymodel.RData")
+confusionMatrix(svmlin.pred,test.df$Cath)
+save(svmlin.model,svmlin.features, file = "svmlinmodel.RData")
 
