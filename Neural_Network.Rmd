@@ -9,7 +9,116 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Load Data
 ```{r}
+load('Featuresselected.RData')
+```
+## Train dataset
+```{r}
+head(train.df)
+str(train.df)
+```
+# Min-Max Normalisation
+```{r}
+for (i in colnames(train.df)) {
+  if(i != "Cath"){
+  train.df[[i]] <- (train.df[[i]] - min(train.df[[i]]))/(max(train.df[[i]]) - min(train.df[[i]]))
+}}
+head(train.df)
+```
+```{r}
+# get the Cath index
+cath_index = grep("Cath", colnames(train.df))
+# import dplyr
+library(dplyr)
+# move Cath to the first column
+cad.train <- train.df %>% select(Cath, everything())
+head(cad.train)
 
+```
+# Train the initial neural network
+```{r}
+library(neuralnet)
+set.seed(27178102)
+
+```
+
+```{r}
+n1 <- neuralnet(Cath ~ .,
+                data = cad.train,
+                hidden = 10,
+                err.fct = "sse",
+                linear.output = F)
+plot(n1)
+```
+# Prediction
+```{r}
+# get the testing dataset
+cad.test <- test.df %>% select(Cath, everything())
+head(cad.test)
+```
+```{r}
+# prediction on training dataset
+output <- compute(n1, cad.train[, -1])
+head(output$net.result)
+```
+# Confusion Matrix - Training dataset
+```{r}
+p1 <- output$net.result[,2]
+# convert prob into binary outputs 0 & 1
+pred1 <- ifelse(p1>0.5, 1, 0)
+tab1 <- table(pred1, cad.train$Cath)
+tab1
+```
+```{r}
+# accuracy
+sum(diag(tab1))/sum(tab1)
+```
+```{r}
+# mis-classification error
+1-sum(diag(tab1))/sum(tab1)
+```
+# Confusion Matrix - Testing dataset
+```{r}
+# prediction on testing dataset
+output.test <- compute(n1, cad.test[, -1])
+p1.test <- output.test$net.result[, 2]
+
+# convert prob into binary outputs 0 & 1
+pred.test <- ifelse(p1.test>0.5, 1, 0)
+tab.test <- table(pred.test, cad.test$Cath)
+tab.test
+```
+```{r}
+# accuracy
+sum(diag(tab.test))/sum(tab.test)
+```
+# More neural networks with different structures
+```{r}
+n2 <- neuralnet(Cath ~ .,
+                data = cad.train,
+                hidden = c(10, 5),
+                err.fct = "ce",
+                linear.output = F,
+                algorithm = 'sag')
+plot(n2)
+```
+
+```{r}
+n3 <- neuralnet(Cath ~ .,
+                data = cad.train,
+                hidden = c(10, 5),
+                err.fct = "sse",
+                linear.output = F)
+
+# prediction on testing dataset
+output.test3 <- compute(n3, cad.test[, -1])
+p1.test3 <- output.test3$net.result[, 2]
+
+# convert prob into binary outputs 0 & 1
+pred.test3 <- ifelse(p1.test3>0.5, 1, 0)
+tab.test3 <- table(pred.test3, cad.test$Cath)
+# accuracy
+sum(diag(tab.test3))/sum(tab.test3)
 ```
 
