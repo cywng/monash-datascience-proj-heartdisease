@@ -4,6 +4,7 @@ author: "Yupeng Miao"
 date: "2020/9/3"
 output: html_document
 ---
+## Guided by: rpubs.com/ezgi/classification
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -60,8 +61,9 @@ nn1.predict = predict(nn1, test.df)
 cm.nn1 <- confusionMatrix(nn1.predict, test.df$Cath)
 print(cm.nn1)
 ```
-
-
+```{r}
+plot(nn1)
+```
 
 
 
