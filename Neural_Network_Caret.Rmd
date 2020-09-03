@@ -1,0 +1,70 @@
+---
+title: "Neural Networks with Caret"
+author: "Yupeng Miao"
+date: "2020/9/3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load pachages & train/test datasets
+```{r}
+load('Featuresselected.RData')
+library(ggplot2)
+library(caret)
+
+```
+# 10-cross-validation
+```{r}
+parameters = trainControl(method = "repeatedcv", 
+                          number = 10, 
+                          repeats = 10)
+```
+
+# Feature selection by SVM (Not using this)
+```{r}
+# train SVM
+SVM = train(Cath ~ ., data = train.df,
+            method = "svmPoly",
+            trControl = parameters,
+            tuneGrid = data.frame(degree = 1, scale = 1, C = 1),
+            preProcess = c("pca", "scale", "center"),
+            na.action = na.omit)
+```
+
+```{r}
+# Ranking features by Importance
+feature.rank = varImp(SVM, scale = TRUE)
+plot(feature.rank)
+```
+```{r}
+print(feature.rank)
+```
+# Train Neural Network
+```{r}
+cath_index = grep("Cath", colnames(train.df))
+nn1 = train(train.df[, -cath_index], 
+            train.df$Cath,
+            method = "nnet",
+            trControl = parameters,
+            preProcess = c("scale", "center"),
+            na.action = na.omit)
+
+```
+# Testing
+```{r}
+nn1.predict = predict(nn1, test.df)
+# confusion matrix
+cm.nn1 <- confusionMatrix(nn1.predict, test.df$Cath)
+print(cm.nn1)
+```
+
+
+
+
+
+
+
+
