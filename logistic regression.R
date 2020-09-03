@@ -33,9 +33,10 @@ control <- trainControl(method="repeatedcv", number=10)
 
 
 #2.doesn't use a penalty term:
-train_model3<-train(Cath ~., data = train, method="glm", family = "binomial" ,trControl=control)
-pred4=predict(train_model3,test) #-----high accuracy   87%
+LR_model<-train(Cath ~., data = train, method="glm", family = "binomial" ,trControl=control)
+pred4=predict(LR_model,test) #-----high accuracy   87%
 
 
 
 mean(pred4== test$Cath)
+save(LR_model,lr.features,file="LR.RData")

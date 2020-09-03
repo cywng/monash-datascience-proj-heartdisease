@@ -13,8 +13,9 @@ test  <- test.df[,c(predictors(rf.features),"Cath")]
 
 
 control <- trainControl(method="repeatedcv", number=10)
-train_model<-train(Cath ~., data = train, method="rf",trControl=control)
-train_model$results
-pred=predict(train_model,test)
+RF_model<-train(Cath ~., data = train, method="rf",trControl=control)
+RF_model$results
+pred=predict(RF_model,test)
 
 mean(pred== test$Cath)#0.87
+save(RF_model,rf.features,file="RF.RData")

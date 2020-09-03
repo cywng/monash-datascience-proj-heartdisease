@@ -14,7 +14,8 @@ test  <- test.df[,c(predictors(nb.features),"Cath")]
 
 
 control <- trainControl(method="repeatedcv", number=10)
-train_model<-train(Cath ~., data = train, method="nb", ,trControl=control)
-pred=predict(train_model,test)
+NB_model<-train(Cath ~., data = train, method="nb", ,trControl=control)
+pred=predict(NB_model,test)
 
-mean(pred== test$Cath)
+mean(pred== test$Cath)#81%
+save(NB_model,nb.features,file="NB.RData")

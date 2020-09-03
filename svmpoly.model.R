@@ -35,7 +35,6 @@ plot(svmpoly.model)
 
 svmpoly.pred = predict(svmpoly.model, newdata=test.df[svmpoly.features$optVariables])
 
-
 confusionMatrix(svmpoly.pred,test.df$Cath)
 
 save(svmpoly.model,svmpoly.features, file = "svmpolymodel.RData")
