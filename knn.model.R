@@ -21,5 +21,6 @@ knn.model <- train(form=as.formula(paste("Cath ~ ",form,sep = "")), data=train.d
 knn.model
 knn.pred = predict(knn.model, newdata=test.df[knn.features])
 confusionMatrix(knn.pred,test.df$Cath)
+#84% test accuracy
 
 save(knn.model, knn.features, file="knnmodel.RData")
