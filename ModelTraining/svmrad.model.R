@@ -1,8 +1,8 @@
 library(caret)
 library(e1071)
 rm(list=ls())
-load(file = "caddata.RData")
-load(file = "Featuresselected.RData")
+load(file = "DataWrangling/caddata.RData")
+load(file = "DataWrangling/Featuresselected.RData")
 set.seed(123)
 
 
@@ -38,5 +38,5 @@ svmrad.pred = predict(svmrad.model, newdata=test.df[svmrad.features$optVariables
 #88.5% test accuracy
 
 confusionMatrix(svmrad.pred,test.df$Cath)
-save(svmrad.model,svmrad.features, file = "SVMradmodel.RData")
+save(svmrad.model,svmrad.features, file = "Models/SVMradmodel.RData")
 

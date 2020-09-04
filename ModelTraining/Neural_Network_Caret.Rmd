@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Load pachages & train/test datasets
 ```{r}
-load('Featuresselected.RData')
+load('DataWrangling/Featuresselected.RData')
 library(ggplot2)
 library(caret)
 

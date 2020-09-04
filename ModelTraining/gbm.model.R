@@ -7,8 +7,8 @@ library(MASS)
 library(caret)
 rm(list=ls())
 set.seed(123)
-load(file = "caddata.RData")
-load(file = "Featuresselected.RData") #import training and test data from the shared file
+load(file = "DataWrangling/caddata.RData")
+load(file = "DataWrangling/Featuresselected.RData") #import training and test data from the shared file
 
 plot(rf.features, type=c("g", "o"))
 predictors(rf.features)
@@ -24,5 +24,5 @@ confusionMatrix(gbm.pred,test.df$Cath)
 #table:true  (test accuracy .87)
 
 #Save resultant model
-save(gbm.model,gbm.features, file = "gbmmodel.RData")
+save(gbm.model,gbm.features, file = "Models/gbmmodel.RData")
 #we only really need gbm.model

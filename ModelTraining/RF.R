@@ -1,8 +1,8 @@
 library(caret)
 library(ranger)
 
-load(file = "caddata.RData")
-load(file = "Featuresselected.RData")
+load(file = "DataWrangling/caddata.RData")
+load(file = "DataWrangling/Featuresselected.RData")
 df=as.data.frame(cad.df.balanced)
 
 set.seed(123)
@@ -18,4 +18,4 @@ RF_model$results
 pred=predict(RF_model,test)
 
 mean(pred== test$Cath)#0.87
-save(RF_model,rf.features,file="RF.RData")
+save(RF_model,rf.features,file="Models/RF.RData")

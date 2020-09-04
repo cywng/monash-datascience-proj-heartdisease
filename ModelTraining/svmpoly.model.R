@@ -1,8 +1,8 @@
 library(caret)
 library(e1071)
 rm(list=ls())
-load(file = "caddata.RData")
-load(file = "Featuresselected.RData")
+load(file = "DataWrangling/caddata.RData")
+load(file = "DataWrangling/Featuresselected.RData")
 set.seed(123)
 
 
@@ -37,5 +37,5 @@ svmpoly.pred = predict(svmpoly.model, newdata=test.df[svmpoly.features$optVariab
 
 confusionMatrix(svmpoly.pred,test.df$Cath)
 
-save(svmpoly.model,svmpoly.features, file = "svmpolymodel.RData")
+save(svmpoly.model,svmpoly.features, file = "Models/svmpolymodel.RData")
 

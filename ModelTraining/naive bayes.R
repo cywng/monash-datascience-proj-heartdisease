@@ -2,8 +2,8 @@ library(caret)
 library(rsample)
 library(klaR)
 
-load(file = "caddata.RData")
-load(file = "Featuresselected.RData")
+load(file = "DataWrangling/caddata.RData")
+load(file = "DataWrangling/Featuresselected.RData")
 df=as.data.frame(cad.df.balanced)
 
 set.seed(123)
@@ -18,4 +18,4 @@ NB_model<-train(Cath ~., data = train, method="nb", ,trControl=control)
 pred=predict(NB_model,test)
 
 mean(pred== test$Cath)#81%
-save(NB_model,nb.features,file="NB.RData")
+save(NB_model,nb.features,file="Models/NB.RData")

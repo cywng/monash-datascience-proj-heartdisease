@@ -7,8 +7,8 @@ library(MASS)
 library(caret)
 rm(list=ls())
 set.seed(123)
-load(file = "caddata.RData")
-load(file = "Featuresselected.RData") #import training and test data from the shared file
+load(file = "DataWrangling/caddata.RData")
+load(file = "DataWrangling/Featuresselected.RData") #import training and test data from the shared file
 
 plot(lda.features, type=c("g", "o"))
 predictors(lda.features)
@@ -31,5 +31,5 @@ confusionMatrix(lda.pred,test.df$Cath)
 #1     3 40
 
 #Save resultant model
-save(lda.model,lda.features, file = "LDAmodel.RData")
+save(lda.model,lda.features, file = "Models/LDAmodel.RData")
 #we only really need lda.model

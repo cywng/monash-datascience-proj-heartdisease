@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Load pachages & train/test datasets
 ```{r}
-load('Featuresselected.RData')
+load('DataWrangling/Featuresselected.RData')
 library(ggplot2)
 library(caret)
 
@@ -45,7 +45,7 @@ plot(tree)
 # Train decision tree with most 20 important features
 ```{r}
 # select 20 features from feature_rank
-load('feature_rank.RData')
+load('DataWrangling/feature_rank.RData')
 feature20 = row.names(feature.rank$importance[1:20,])
 tree.train = train.df[c("Cath", feature20)]
 tree.test = test.df[c("Cath", feature20)]

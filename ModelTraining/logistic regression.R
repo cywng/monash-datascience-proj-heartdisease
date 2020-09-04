@@ -2,8 +2,8 @@ library(caret)
 #library(rsample)
 library(glmnet) 
 rm(list=ls())
-load(file = "caddata.RData")
-load(file = "Featuresselected.RData")
+load(file = "DataWrangling/caddata.RData")
+load(file = "DataWrangling/Featuresselected.RData")
 df <- as.data.frame(lapply(cad.df.balanced, function(x) if(is.factor(x)){
   as.numeric(x)-1
 } else x))
@@ -39,4 +39,4 @@ pred4=predict(LR_model,test) #-----high accuracy   87%
 
 
 mean(pred4== test$Cath)
-save(LR_model,lr.features,file="LR.RData")
+save(LR_model,lr.features,file="Models/LR.RData")

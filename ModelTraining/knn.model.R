@@ -1,8 +1,8 @@
 library(caret)
 library(e1071)
 rm(list=ls())
-load(file = "caddata.RData")
-load(file = "Featuresselected.RData")
+load(file = "DataWrangling/caddata.RData")
+load(file = "DataWrangling/Featuresselected.RData")
 set.seed(123)
 
 train.df$Cath <- as.factor(ifelse(train.df$Cath == 0,"N","Y"))
@@ -23,4 +23,4 @@ knn.pred = predict(knn.model, newdata=test.df[knn.features])
 confusionMatrix(knn.pred,test.df$Cath)
 #84% test accuracy
 
-save(knn.model, knn.features, file="knnmodel.RData")
+save(knn.model, knn.features, file="Models/knnmodel.RData")
