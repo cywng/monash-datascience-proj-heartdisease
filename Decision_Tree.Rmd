@@ -1,0 +1,86 @@
+---
+title: "Decision Tree"
+author: "Yupeng Miao"
+date: "2020/9/3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load pachages & train/test datasets
+```{r}
+load('Featuresselected.RData')
+library(ggplot2)
+library(caret)
+
+```
+# 10-cross-validation
+```{r}
+parameters = trainControl(method = "repeatedcv", 
+                          number = 10, 
+                          repeats = 10)
+```
+# Train Decision Tree
+```{r}
+tree = train(Cath ~ .,
+             data = train.df,
+             method = "C5.0",
+             trControl = parameters,
+             preProcess = c("scale", "center"),
+             na.action = na.omit)
+```
+# Test decision tree
+```{r}
+tree.predict = predict(tree, test.df)
+# confusion matrix
+cm.tree <- confusionMatrix(tree.predict, test.df$Cath)
+print(cm.tree)
+```
+```{r}
+plot(tree)
+```
+
+# Train decision tree with most 20 important features
+```{r}
+# select 20 features from feature_rank
+load('feature_rank.RData')
+feature20 = row.names(feature.rank$importance[1:20,])
+tree.train = train.df[c("Cath", feature20)]
+tree.test = test.df[c("Cath", feature20)]
+
+```
+```{r}
+# Train & test the tree
+tree20 = train(Cath ~ .,
+             data = tree.train,
+             method = "C5.0",
+             trControl = parameters,
+             preProcess = c("scale", "center"),
+             na.action = na.omit)
+tree20.predict = predict(tree20, test.df)
+```
+```{r}
+# confusion matrix
+cm.tree20 <- confusionMatrix(tree20.predict, tree.test$Cath)
+print(cm.tree20)
+# accuracy = 80.33%
+```
+
+```{r}
+ada = train(Cath ~ .,
+             data = train.df,
+             method = "adaboost",
+             trControl = parameters,
+             preProcess = c("scale", "center"),
+             na.action = na.omit)
+```
+# Test AdaBoost Classification Trees
+```{r}
+ada.predict = predict(ada, test.df)
+# confusion matrix
+cm.ada <- confusionMatrix(ada.predict, test.df$Cath)
+print(cm.ada)
+```
+
