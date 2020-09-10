@@ -1,5 +1,3 @@
-#gbm assumes Gaussian prior on all features. Does not really work given our data, 
-#would not be a good idea. Can apply to a subset of the data but we will avoid for now.
 #resource: https://rpubs.com/maulikpatel/229684
 #We should feature select AFTER train/test split. proof:https://stackoverflow.com/questions/56308116/should-feature-selection-be-done-before-train-test-split-or-after#:~:text=The%20contradicting%20answer%20is%20that,in%20random_state%20of%20the%20Train_Test_Split.
 
