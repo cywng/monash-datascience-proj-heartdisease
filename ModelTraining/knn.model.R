@@ -1,6 +1,7 @@
 library(caret)
 library(e1071)
 rm(list=ls())
+#getwd()
 load(file = "DataWrangling/caddata.RData")
 load(file = "DataWrangling/Featuresselected.RData")
 set.seed(123)
