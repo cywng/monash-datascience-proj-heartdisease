@@ -1,3 +1,6 @@
+library(plyr)
+library(caret)
+library(e1071)
 rm(list=ls())
 load(file = "DataWrangling/Featuresselected.RData")
 load(file = "Models/SVMradmodel.RData")
@@ -30,4 +33,22 @@ generate_ensemble_df <- function(caddataset){
   return(aggregate_pred.df)
 }
 
+#====Naive voting ensemble ====
+vote_ensemble <- function(dataset, label="Cath"){
+  #label should be string name of column
+  df = dataset[,names(dataset) != c(label)]
+  num = dim(df)[2]
+  numericdf <- data.frame(apply(df, 2,function(x){revalue(x,c("Y"=1,"N"=0),warn_missing = FALSE)}))
+  #change the sum formula here for weignting. Can dot product with weight vector.
+  vote = apply(numericdf, 1, function(x) sum(as.numeric(x)))/num
+  return(as.factor(ifelse(round(vote) == 0,"N","Y")))
+}
+
 pred.df <- generate_ensemble_df(train.df)
+ensem_result <- vote_ensemble(pred.df)
+confusionMatrix(ensem_result,train.df$Cath)
+
+ensem_result_test <- vote_ensemble(generate_ensemble_df(test.df))
+confusionMatrix(ensem_result_test,test.df$Cath)
+
+#====Train logistic regression on result====
