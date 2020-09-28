@@ -33,6 +33,7 @@ generate_ensemble_df <- function(caddataset){
   return(aggregate_pred.df)
 }
 
+pred.df <- generate_ensemble_df(train.df)
 #====Naive voting ensemble ====
 vote_ensemble <- function(dataset, label="Cath"){
   #label should be string name of column
@@ -44,7 +45,6 @@ vote_ensemble <- function(dataset, label="Cath"){
   return(as.factor(ifelse(round(vote) == 0,"N","Y")))
 }
 
-pred.df <- generate_ensemble_df(train.df)
 ensem_result <- vote_ensemble(pred.df)
 confusionMatrix(ensem_result,train.df$Cath)
 
@@ -52,3 +52,31 @@ ensem_result_test <- vote_ensemble(generate_ensemble_df(test.df))
 confusionMatrix(ensem_result_test,test.df$Cath)
 
 #====Train logistic regression on result====
+#results in errors due to non-convergence as data is mostly uniform
+#1: glm.fit: algorithm did not converge
+#2: In predict.lm(object, newdata, se.fit, scale = 1, type = if (type ==  ... :
+#                                         prediction from a rank-deficient fit may be misleading
+
+control <- trainControl(method="repeatedcv", number=10)
+lr_ensem<-train(Cath ~., data = pred.df, method="glm", family = "binomial" ,trControl=control)
+
+ensem_lr_test=predict(lr_ensem,generate_ensemble_df(test.df))
+confusionMatrix(ensem_lr_test,test.df$Cath)
+
+#====Train RF====
+#this is robust to the strange data that we have left. LDA did not like that some data was all 1.
+
+control <- trainControl(method="repeatedcv", number=10)
+rf_ensem<-train(Cath ~., data = pred.df, method="rf", family = "binomial" ,trControl=control)
+
+ensem_rf_test=predict(rf_ensem,generate_ensemble_df(test.df))
+confusionMatrix(ensem_rf_test,test.df$Cath)
+
+#====Try feature selection to drop some predictors====
+control <- rfeControl(functions=rfFuncs, method="cv")
+rf_ensem.features <- rfe(pred.df[,names(pred.df) != c("Cath")], pred.df$Cath, sizes=c(1:9), rfeControl=control)
+print(rf_ensem.features)
+
+plot(rf_ensem.features, type=c("g", "o"))
+#Results show same accuracy for all feature subsets - this shows that this is not a good method of ensembling.
+#Instead we should use the weights from each model as an indicator of how 'sure' it is, and be more affected by a higher certianty.
