@@ -31,7 +31,6 @@ vote_ensemble <- function(dataset, label="Cath", prob='class',input='factor'){
   } else {numericdf <- df}
   num = dim(df)[2]
   vote = apply(numericdf, 1, function(x) sum(as.numeric(x)))/num #change the sum formula here for weignting. Can dot product with weight vector.
-  print(vote)
   if(prob=='class'){
     return(as.factor(ifelse(round(vote) == 0,"N","Y")))
   } else {return(vote)}
@@ -41,13 +40,15 @@ vote_ensemble <- function(dataset, label="Cath", prob='class',input='factor'){
 generate_ensemble_df <- function(caddataset){
   #models <-  c(knn.model, lda.model, LR_model, NB_model, RF_model, svmlin.model, svmpoly.model, svmrad.model, nn1) this is some fucked up thing
   aggregate_pred.df <- as.data.frame(caddataset$Cath)
-  colnames(aggregate_pred.df)=c("Cath")
+  
   #attach predictions
+  #only has two??
   aggregate_pred.df$knnres <-  predict(knn.model, caddataset[knn.features], type="prob")$Y
   aggregate_pred.df$ldares <-  predict(lda.model, caddataset[lda.features$optVariables], type="prob")$Y
-  aggregate_pred.df$lrres <-  predict(LR_model, caddataset[lr.features$optVariables], type="prob")$Y
-  aggregate_pred.df$nbres <-  predict(NB_model, caddataset[nb.features$optVariables], type="prob")$Y
-  aggregate_pred.df$rfres <-  predict(RF_model, caddataset[rf.features$optVariables], type="prob")$Y
+  aggregate_pred.df$lrres <-  predict(LR_model, caddataset[lr.features$optVariables], type="prob")[,2]
+  aggregate_pred.df$nbres <-  predict(NB_model, caddataset[nb.features$optVariables], type="prob")[,2]
+  aggregate_pred.df$rfres <-  predict(RF_model, caddataset[rf.features$optVariables], type="prob")[,2]
+  colnames(aggregate_pred.df)=c("Cath", "knn", "lda","lr","nb","rf")
   aggregate_pred.df$NNres <-  predict(nn1, caddataset, type="prob")$Y
   
   #SVM has no natural prediction, so we aggregate these 3.
@@ -64,9 +65,11 @@ pred.df <- generate_ensemble_df(train.df)
 #====results====
 ensem_result <- vote_ensemble(pred.df, label = 'Cath', prob='class',input='prob')
 confusionMatrix(ensem_result,train.df$Cath)
+#train accuracy 0.92
 
 ensem_result_test <- vote_ensemble(generate_ensemble_df(test.df),label = 'Cath', prob='class',input='prob')
 confusionMatrix(ensem_result_test,test.df$Cath)
+#test accuracy 0.87
 
 #====Train logistic regression on result====
 #results in errors due to non-convergence as data is mostly uniform
@@ -75,10 +78,11 @@ confusionMatrix(ensem_result_test,test.df$Cath)
 #                                         prediction from a rank-deficient fit may be misleading
 
 control <- trainControl(method="repeatedcv", number=10)
-lr_ensem<-train(Cath ~., data = pred.df, method="glm", family = "binomial" ,trControl=control)
+lr_ensem <- train(Cath ~., data = pred.df, method="glm", family = "binomial" ,trControl=control)
 
 ensem_lr_test=predict(lr_ensem,generate_ensemble_df(test.df))
 confusionMatrix(ensem_lr_test,test.df$Cath)
+#Test accuracy 0.84
 
 #====Train RF====
 #this is robust to the strange data that we have left. LDA did not like that some data was all 1.
@@ -88,12 +92,21 @@ rf_ensem<-train(Cath ~., data = pred.df, method="rf", family = "binomial" ,trCon
 
 ensem_rf_test=predict(rf_ensem,generate_ensemble_df(test.df))
 confusionMatrix(ensem_rf_test,test.df$Cath)
+#test accuracy 0.85
 
 #====Try feature selection to drop some predictors====
 control <- rfeControl(functions=rfFuncs, method="cv")
 rf_ensem.features <- rfe(pred.df[,names(pred.df) != c("Cath")], pred.df$Cath, sizes=c(1:9), rfeControl=control)
 print(rf_ensem.features)
+#3 variables: rf, lr, svm.
 
 plot(rf_ensem.features, type=c("g", "o"))
 #Results show same accuracy for all feature subsets - this shows that this is not a good method of ensembling.
 #Instead we should use the weights from each model as an indicator of how 'sure' it is, and be more affected by a higher certianty.
+
+control <- trainControl(method="repeatedcv", number=10)
+rf_ensem_fs<-train(Cath ~ rf + lr + svm, data = pred.df, method="rf", family = "binomial" ,trControl=control)
+
+ensem_rf_test_fs=predict(rf_ensem_fs,generate_ensemble_df(test.df))
+confusionMatrix(ensem_rf_test_fs,test.df$Cath)
+#0.87 test accuracy. not great.
