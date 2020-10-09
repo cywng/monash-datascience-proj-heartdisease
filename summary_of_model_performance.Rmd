@@ -1,0 +1,94 @@
+---
+title: "Summary of models trained"
+author: "Team 1"
+date: "09/10/2020"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning=FALSE, message=FALSE)
+```
+
+# Summary of trained model performance
+First we load the models.
+```{r}
+
+library(plyr)
+library(caret)
+library(e1071)
+rm(list=ls())
+load(file = "DataWrangling/Featuresselected.RData")
+load(file = "Models/SVMradmodel.RData")
+load(file = "Models/svmpolymodel.RData")
+load(file = "Models/svmlinmodel.RData")
+load(file = "Models/RF.RData")
+load(file = "Models/Neural_Network.RData")
+load(file = "Models/NB.RData")
+load(file = "Models/LR.RData")
+load(file = "Models/LDAmodel.RData")
+load(file = "Models/knnmodel.RData")
+train.df$Cath <- as.factor(ifelse(train.df$Cath == 0,"N","Y"))
+test.df$Cath <- as.factor(ifelse(test.df$Cath == 0,"N","Y"))
+```
+
+## Individual Models
+
+Here is a summary of the performance of our individual models.
+
+### k-Nearest Neighbours
+```{r}
+knn_result <- predict(knn.model, test.df[knn.features])
+confusionMatrix(knn_result,test.df$Cath)
+```
+### Linear Discriminant Analysis
+```{r}
+lda_result <- predict(lda.model, test.df[lda.features$optVariables])
+confusionMatrix(lda_result,test.df$Cath)
+```
+
+### Logistic Regression
+```{r}
+lr_result <- as.factor(ifelse(predict(LR_model, test.df[lr.features$optVariables])==1,"Y","N"))
+confusionMatrix(lr_result,test.df$Cath)
+```
+
+### Naive Bayes
+```{r}
+nb_result <- as.factor(ifelse(predict(NB_model, test.df[nb.features$optVariables])==1,"Y","N"))
+confusionMatrix(nb_result,test.df$Cath)
+```
+
+### Random Forest
+```{r}
+rf_result <- as.factor(ifelse(predict(RF_model, test.df[rf.features$optVariables])==1,"Y","N"))
+confusionMatrix(rf_result,test.df$Cath)
+```
+
+### Neural Network
+```{r}
+nn_result <- as.factor(ifelse(predict(nn1, test.df)==1,"Y","N"))
+confusionMatrix(nn_result,test.df$Cath)
+```
+
+### Support Vector Machines: Linear kernal
+```{r}
+svm_lin_result <- predict(svmlin.model, test.df[svmlin.features$optVariables])
+confusionMatrix(svm_lin_result,test.df$Cath)
+```
+
+### Support Vector Machines: Polynominal kernal
+```{r}
+svm_poly_result <- predict(svmpoly.model, test.df[svmpoly.features$optVariables])
+confusionMatrix(svm_poly_result,test.df$Cath)
+```
+
+### Support Vector Machines: Radial Basis kernal
+```{r}
+svm_rad_result <- predict(svmrad.model, test.df[svmrad.features$optVariables])
+confusionMatrix(svm_rad_result,test.df$Cath)
+```
+
+## Ensemble Models
+
+
