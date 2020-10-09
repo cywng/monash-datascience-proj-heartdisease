@@ -49,19 +49,22 @@ confusionMatrix(lda_result,test.df$Cath)
 
 ### Logistic Regression
 ```{r}
-lr_result <- as.factor(ifelse(predict(LR_model, test.df[lr.features$optVariables])==1,"Y","N"))
+lr_result <- as.factor(ifelse(predict(LR_model, test.df[lr.features$optVariables])==1,
+                              "Y","N"))
 confusionMatrix(lr_result,test.df$Cath)
 ```
 
 ### Naive Bayes
 ```{r}
-nb_result <- as.factor(ifelse(predict(NB_model, test.df[nb.features$optVariables])==1,"Y","N"))
+nb_result <- as.factor(ifelse(predict(NB_model, test.df[nb.features$optVariables])==1,
+                              "Y","N"))
 confusionMatrix(nb_result,test.df$Cath)
 ```
 
 ### Random Forest
 ```{r}
-rf_result <- as.factor(ifelse(predict(RF_model, test.df[rf.features$optVariables])==1,"Y","N"))
+rf_result <- as.factor(ifelse(predict(RF_model, test.df[rf.features$optVariables])==1,
+                              "Y","N"))
 confusionMatrix(rf_result,test.df$Cath)
 ```
 
@@ -140,26 +143,31 @@ pred.df <- generate_ensemble_df(train.df)
 
 ### Ensemble by voting
 ```{r}
-ensem_result_test <- vote_ensemble(generate_ensemble_df(test.df),label = 'Cath', prob='class',input='prob')
+ensem_result_test <- vote_ensemble(generate_ensemble_df(test.df),
+                                   label = 'Cath', prob='class',input='prob')
 confusionMatrix(ensem_result_test,test.df$Cath)
-#test accuracy 0.87
 ```
 ## Training models on the combined data frame.
+We can also train models on the new data frame generated above by generate_ensemble_df(). We choose two simple models, as we have few features.
 
 ### Logistic Regression Ensemble
 ```{r}
 control <- trainControl(method="repeatedcv", number=10)
-lr_ensem <- train(Cath ~., data = pred.df, method="glm", family = "binomial" ,trControl=control)
+lr_ensem <- train(Cath ~., data = pred.df, method="glm", family = "binomial",
+                  trControl=control)
 
 ensem_lr_test=predict(lr_ensem,generate_ensemble_df(test.df))
 confusionMatrix(ensem_lr_test,test.df$Cath)
 ```
 
-
+### Random Forest Ensemble
 ```{r}
 control <- trainControl(method="repeatedcv", number=10)
-rf_ensem<-train(Cath ~., data = pred.df, method="rf", family = "binomial" ,trControl=control)
+rf_ensem<-train(Cath ~., data = pred.df, method="rf", family = "binomial",
+                trControl=control)
 
 ensem_rf_test=predict(rf_ensem,generate_ensemble_df(test.df))
 confusionMatrix(ensem_rf_test,test.df$Cath)
 ```
+
+We note that all the above ensemble attempts have comparable performance to the individual models.
