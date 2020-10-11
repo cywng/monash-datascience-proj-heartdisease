@@ -35,9 +35,11 @@ for (i in 1:22) {
 }
 
 #==== convert to json ====
-input_data = test.df[1,][lda.model$finalModel$xNames]
+input_data_pos = test.df[1,][lda.model$finalModel$xNames]
+input_data_neg = test.df[10,][lda.model$finalModel$xNames]
 #first entry as our test data
 
 library(rjson)
-test_case_json <- toJSON(input_data)
+test_case_json <- toJSON(input_data_neg)
 cat(test_case_json)
+

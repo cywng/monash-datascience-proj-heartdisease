@@ -1,11 +1,11 @@
 #Script name: plumber_api.R
 
-#' @apiTitle Run predictions for Coronary Artery Disease with an LDA model
+#' @apiTitle Run predictions for Coronary Artery Disease with an LDA model.
 #' @apiDescription This API takes as patient data on Coronary artery disease (CAD) and returns a prediction whether the input values
 #' indicate CAD (Y) or no CAD (N).
-#' This was based on the web post https://www.shirin-glander.de/2018/01/plumber/
-#' This has been built as part of a final year project at monash university, with repo being available 
-#' https://github.com/cywng/monash-datascience-proj-heartdisease
+#' This was based on the web post https://www.shirin-glander.de/2018/01/plumber/.
+#' This has been built as part of a final year project at monash university, with repo being available here: 
+#' https://github.com/cywng/monash-datascience-proj-heartdisease.
 
 # load model
 load(file="../Models/LDAmodel.RData")
@@ -25,29 +25,29 @@ function(req){
 # return output as html/text
 # specify 200 (okay) return
 
-#' predict Chronic Kidney Disease of test case with Random Forest model
-#' @param Typical.Chest.Pain:numeric Whether or not the patient reports chest pain (1 for yes, 0 for no)
-#' @param Age:numeric The age of the patient
-#' @param Atypical:int
-#' @param FBS:numeric
-#' @param HTN:int
-#' @param DM:int
+#' predict Coronary Artery Disease with an LDA model.
+#' @param Typical.Chest.Pain:numeric Presence of chest pain (1 for yes, 0 for no).
+#' @param Age:numeric The age of the patient.
+#' @param Atypical:int 
+#' @param FBS:numeric Fasting blood sugar level (mg/dl, 62-400)
+#' @param HTN:int Presence of hypertension (1 for yes, 0 for no).
+#' @param DM:int Presence of diabetes mellitus (1 for yes, 0 for no).
 #' @param EF.TTE:numeric
-#' @param K:numeric
-#' @param PR:numeric
-#' @param ESR:numeric
-#' @param TG:numeric
-#' @param Tinversion:int
-#' @param Lymph:numeric
-#' @param Neut:numeric
-#' @param St.Depression:int
-#' @param Dyspnea:int
-#' @param Nonanginal:int
-#' @param Region.RWMA2:int
-#' @param VHD.Mild:int
-#' @param PLT:numeric
-#' @param BMI:numeric
-#' @param Na:numeric
+#' @param K:numeric Potassium content in blood (mEq/lit; 3.0-6.6).
+#' @param PR:numeric Resting heart rate (bpm; 50-110).
+#' @param ESR:numeric Erythrocyte sedimentation rate (mm/h; 1-90).
+#' @param TG:numeric Triclyceride concentration in blood (mg/dl; 37-1050).
+#' @param Tinversion:int Presence of Tinversion in ECG reading (1 for yes, 0 for no).
+#' @param Lymph:numeric Lymphocyte % (7-60).
+#' @param Neut:numeric Neutrophil % (32-89).
+#' @param St.Depression:int Presence of ST Depression in ECG (1 for yes, 0 for no).
+#' @param Dyspnea:int Presence of dyspnea (1 for yes, 0 for no).
+#' @param Nonanginal:int Presence of nonanginal chest pain (1 for yes, 0 for no).
+#' @param Region.RWMA2:int If the second region of the heart has regional wall motion abnormality (1 for yes, 0 for no).
+#' @param VHD.Mild:int If they have 'mild' valvular heart disease (1 for yes, 0 for no).
+#' @param PLT:numeric Platelet count (1000/ml; 25-742).
+#' @param BMI:numeric Body Mass Index (18-41).
+#' @param Na:numeric Sodium content in blood (mEQ/lit; 128-156).
 
 #' @get /predict
 #' @html
@@ -66,12 +66,12 @@ calculate_prediction <- function(Typical.Chest.Pain, Age, Atypical, FBS, HTN, DM
     res$status <- 400
     res$body <- "Parameters have to be numeric or integers"
   }
-  
+
   #if (any(input_data < 0) || any(input_data > 1)) {
   #  res$status <- 400
   #  res$body <- "Parameters have to be between 0 and 1"
   #}
-  
+
   # predict and return result
   pred_rf <<- predict(lda.model, input_data)
   paste("----------------\nTest case predicted to be", as.character(pred_rf), "\n----------------\n")
