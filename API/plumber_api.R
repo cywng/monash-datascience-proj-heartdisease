@@ -73,6 +73,6 @@ calculate_prediction <- function(Typical.Chest.Pain, Age, Atypical, FBS, HTN, DM
   #}
 
   # predict and return result
-  pred_rf <<- predict(lda.model, input_data)
-  paste("----------------\nTest case predicted to be", as.character(pred_rf), "\n----------------\n")
+  pred_rf <<- predict(lda.model, input_data, type="prob")$Y
+  paste("----------------\nTest case has CAD with ", as.character(pred_rf), " confidence. \n----------------\n")
 }
