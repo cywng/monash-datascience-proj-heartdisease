@@ -179,7 +179,7 @@ if (interactive()) {
                         "St.Depression"=St.Depression,"Dyspnea"=Dyspnea,"Nonanginal"=Nonanginal,
                         "Region.RWMA2"=Region.RWMA2,"VHD.Mild"=VHD.Mild,"PLT"=PLT,"BMI"=BMI,"Na"=Na)
          pr=predict(lda.model,new)
-         if(pr=="N"){cat("The reault is: NORMAL")}else if (pr=="Y"){cat("The reault is: CAD")}
+         cat("The case has CAD with:",pr,type="prob")$Y
        }
         else{
            file<-input$file1
