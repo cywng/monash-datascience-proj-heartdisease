@@ -271,7 +271,7 @@ if (interactive()) {
                            "Region.RWMA2"=Region.RWMA2,"VHD.Mild"=VHD.Mild,"PLT"=PLT,"BMI"=BMI,"Na"=Na)
            pr=predict(lda.model,new2,type="prob")$Y
           # if(pr=="N"){cat("The reault is: NORMAL")}else if (pr=="Y"){cat("The reault is: CAD")}
-           cat("The case has CAD with:",pr)
+           cat("The case has CAD with confidence ",pr)
         }
         
        })
