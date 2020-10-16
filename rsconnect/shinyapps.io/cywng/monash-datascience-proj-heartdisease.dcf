@@ -1,0 +1,10 @@
+name: monash-datascience-proj-heartdisease
+title:
+username:
+account: cywng
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3028044
+bundleId: 3747188
+url: https://cywng.shinyapps.io/monash-datascience-proj-heartdisease/
+when: 1602810420.70316
