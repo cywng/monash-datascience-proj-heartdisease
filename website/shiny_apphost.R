@@ -2,7 +2,7 @@ library(shiny)
 library(Hmisc)
 load(file = "Models/LDAmodel.RData")
 load(file = "DataWrangling/caddata.RData")
-new<-data.frame("Typical.Chest.Pain"=as.numeric("1"),"Age"=60,"Atypical"=0,"FBS"=0,"HTN"=1,"DM"=1,"EF.TTE"=20, "K"=2,"PR"=2,"ESR"=1,"TG"=2,"Tinversion"=0,"Lymph"=2,"Neut"=2,"St.Depression"=1,"Dyspnea"=1,"Nonanginal"=1,"Region.RWMA2"=1,"VHD.Mild"=1,"PLT"=2,"BMI"=2,"Na"=3)
+#new<-data.frame("Typical.Chest.Pain"=as.numeric("1"),"Age"=60,"Atypical"=0,"FBS"=0,"HTN"=1,"DM"=1,"EF.TTE"=20, "K"=2,"PR"=2,"ESR"=1,"TG"=2,"Tinversion"=0,"Lymph"=2,"Neut"=2,"St.Depression"=1,"Dyspnea"=1,"Nonanginal"=1,"Region.RWMA2"=1,"VHD.Mild"=1,"PLT"=2,"BMI"=2,"Na"=3)
 
 #-----------
 #predict(lda.model,new)
@@ -25,6 +25,7 @@ Neut<-round(mean(train.df$Neut),digits=0)
 PLT<-round(mean(train.df$PLT),digits=0)
 BMI<-round(mean(train.df$BMI),digits=0)
 Na<-round(mean(train.df$Na),digits=0)
+
 ui<-shinyUI(fluidPage(
   h1("Heart Disease Prediction",align = "center"),#titlePanel
   # titlePanel("Heart Disease Prediction"),
@@ -94,8 +95,8 @@ ui<-shinyUI(fluidPage(
       )
       # plotOutput("map")
     )),
-  
 ))
+
 server <- function(input, output) {
   observeEvent(input$button,{
       output$pred<-renderPrint({
