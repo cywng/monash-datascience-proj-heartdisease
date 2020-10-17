@@ -1,7 +1,7 @@
 library(shiny)
 library(Hmisc)
-load(file = "Models/LDAmodel.RData")
-load(file = "DataWrangling/caddata.RData")
+load(file = "LDAmodel.RData")
+load(file = "caddata.RData")
 
 function(input, output) {
   observeEvent(input$button,{
@@ -84,8 +84,8 @@ function(input, output) {
                         "TG"=TG,"Tinversion"=Tinversion,"Lymph"=Lymph,"Neut"=Neut,
                         "St.Depression"=St.Depression,"Dyspnea"=Dyspnea,"Nonanginal"=Nonanginal,
                         "Region.RWMA2"=Region.RWMA2,"VHD.Mild"=VHD.Mild,"PLT"=PLT,"BMI"=BMI,"Na"=Na)
-        pr=predict(lda.model,new)
-        cat("The case has CAD with:",pr,type="prob")$Y
+        pr=predict(lda.model,new,type="prob")$Y
+        cat("The case has CAD with:",pr)
       }
       else{
         file<-input$file1
