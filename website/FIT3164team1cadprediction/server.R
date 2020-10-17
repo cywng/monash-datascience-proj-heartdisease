@@ -85,8 +85,8 @@ function(input, output) {
                         "TG"=TG,"Tinversion"=Tinversion,"Lymph"=Lymph,"Neut"=Neut,
                         "St.Depression"=St.Depression,"Dyspnea"=Dyspnea,"Nonanginal"=Nonanginal,
                         "Region.RWMA2"=Region.RWMA2,"VHD.Mild"=VHD.Mild,"PLT"=PLT,"BMI"=BMI,"Na"=Na)
-        pr=predict(lda.model,new,type="prob")$Y
-        cat("The case has CAD with:",pr)
+        pr=round(predict(lda.model,new,type="prob")$Y,2)
+        cat("The case has a ",pr," chance of having Coronary Artery Disease.")
       }
       else{
         file<-input$file1
@@ -176,7 +176,7 @@ function(input, output) {
                          "TG"=TG,"Tinversion"=Tinversion,"Lymph"=Lymph,"Neut"=Neut,
                          "St.Depression"=St.Depression,"Dyspnea"=Dyspnea,"Nonanginal"=Nonanginal,
                          "Region.RWMA2"=Region.RWMA2,"VHD.Mild"=VHD.Mild,"PLT"=PLT,"BMI"=BMI,"Na"=Na)
-        pr=predict(lda.model,new2,type="prob")$Y
+        pr=round(predict(lda.model,new2,type="prob")$Y,2)
         # if(pr=="N"){cat("The reault is: NORMAL")}else if (pr=="Y"){cat("The reault is: CAD")}
         cat("The case has a ",pr," chance of having Coronary Artery Disease.")
       }
