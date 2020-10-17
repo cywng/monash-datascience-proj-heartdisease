@@ -1,8 +1,9 @@
 library(shiny)
 library(Hmisc)
+library(caret)
 load(file = "LDAmodel.RData")
+load(file = "Featuresselected.RData")
 
-load(file = "caddata.RData")
 Age<-round(mean(train.df$Age),digits=0)
 FBS<-round(mean(train.df$FBS),digits=0)
 EF.TTE<-round(mean(train.df$EF.TTE),digits=0)

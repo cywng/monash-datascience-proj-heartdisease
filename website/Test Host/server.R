@@ -1,7 +1,8 @@
 library(shiny)
 library(Hmisc)
+library
 load(file = "LDAmodel.RData")
-load(file = "caddata.RData")
+load(file = "Featuresselected.RData")
 
 function(input, output) {
   observeEvent(input$button,{
@@ -177,7 +178,7 @@ function(input, output) {
                          "Region.RWMA2"=Region.RWMA2,"VHD.Mild"=VHD.Mild,"PLT"=PLT,"BMI"=BMI,"Na"=Na)
         pr=predict(lda.model,new2,type="prob")$Y
         # if(pr=="N"){cat("The reault is: NORMAL")}else if (pr=="Y"){cat("The reault is: CAD")}
-        cat("The case has CAD with confidence: ",pr)
+        cat("The case has a ",pr," chance of having Coronary Artery Disease.")
       }
       
     })
