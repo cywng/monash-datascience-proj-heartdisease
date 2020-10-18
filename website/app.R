@@ -1,8 +1,8 @@
 library(shiny)
-library(Hmisc)
-load(file = "Models/LDAmodel.RData")
-load(file = "DataWrangling/caddata.RData")
-new<-data.frame("Typical.Chest.Pain"=as.numeric("1"),"Age"=60,"Atypical"=0,"FBS"=0,"HTN"=1,"DM"=1,"EF.TTE"=20, "K"=2,"PR"=2,"ESR"=1,"TG"=2,"Tinversion"=0,"Lymph"=2,"Neut"=2,"St.Depression"=1,"Dyspnea"=1,"Nonanginal"=1,"Region.RWMA2"=1,"VHD.Mild"=1,"PLT"=2,"BMI"=2,"Na"=3)
+library(here)
+load(here(file = "Models/LDAmodel.RData"))
+load(here(file = "Datawrangling/Featuresselected.RData"))
+#new<-data.frame("Typical.Chest.Pain"=as.numeric("1"),"Age"=60,"Atypical"=0,"FBS"=0,"HTN"=1,"DM"=1,"EF.TTE"=20, "K"=2,"PR"=2,"ESR"=1,"TG"=2,"Tinversion"=0,"Lymph"=2,"Neut"=2,"St.Depression"=1,"Dyspnea"=1,"Nonanginal"=1,"Region.RWMA2"=1,"VHD.Mild"=1,"PLT"=2,"BMI"=2,"Na"=3)
 
 #-----------
 #predict(lda.model,new)
@@ -12,8 +12,8 @@ new<-data.frame("Typical.Chest.Pain"=as.numeric("1"),"Age"=60,"Atypical"=0,"FBS"
 #[7] "EF.TTE"             "K"                  "PR"                 "ESR"                "TG"                 "Tinversion"        
 #[13] "Lymph"              "Neut"               "St.Depression"      "Dyspnea"            "Nonanginal"         "Region.RWMA2"      
 #[19] "VHD.Mild"           "PLT"                "BMI"                "Na"   
-if (interactive()) {
-   load(file = "DataWrangling/caddata.RData")
+
+ 
    Age<-round(mean(train.df$Age),digits=0)
    FBS<-round(mean(train.df$FBS),digits=0)
    EF.TTE<-round(mean(train.df$EF.TTE),digits=0)
@@ -178,8 +178,8 @@ if (interactive()) {
                         "TG"=TG,"Tinversion"=Tinversion,"Lymph"=Lymph,"Neut"=Neut,
                         "St.Depression"=St.Depression,"Dyspnea"=Dyspnea,"Nonanginal"=Nonanginal,
                         "Region.RWMA2"=Region.RWMA2,"VHD.Mild"=VHD.Mild,"PLT"=PLT,"BMI"=BMI,"Na"=Na)
-         pr=predict(lda.model,new)
-         cat("The case has CAD with:",pr,type="prob")$Y
+         pr=predict(lda.model,new,type="prob")$Y
+         cat("The case has CAD with:",pr)
        }
         else{
            file<-input$file1
@@ -188,8 +188,7 @@ if (interactive()) {
            req(file)
            validate(need(ext == "csv", "Please upload a csv file"))
            file<-read.csv(file$datapath)
-           #_-----
-           load(file = "DataWrangling/caddata.RData")
+         
            if(is.null(file$Typical.Chest.Pain)){Typical.Chest.Pain<-round(mean(train.df$Typical.Chest.Pain),digits=0)}
            else{Typical.Chest.Pain<-file$Typical.Chest.Pain}
            
@@ -271,7 +270,7 @@ if (interactive()) {
                            "Region.RWMA2"=Region.RWMA2,"VHD.Mild"=VHD.Mild,"PLT"=PLT,"BMI"=BMI,"Na"=Na)
            pr=predict(lda.model,new2,type="prob")$Y
           # if(pr=="N"){cat("The reault is: NORMAL")}else if (pr=="Y"){cat("The reault is: CAD")}
-           cat("The case has CAD with confidence: ",pr)
+           cat("The case has CAD with : ",pr)
         }
         
        })
@@ -280,7 +279,6 @@ if (interactive()) {
   }
   
   app<- shinyApp(ui, server)
-  runApp(app,port=getOption("shiny.port",8080),host = getOption("shiny.host", "127.0.0.1"))
+
   #library(rsconnect)
   #rsconnect::deployApp()
-}
