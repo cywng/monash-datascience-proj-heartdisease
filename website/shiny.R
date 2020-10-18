@@ -2,7 +2,7 @@ library(shiny)
 library(Hmisc)
 load(file = "Models/LDAmodel.RData")
 load(file = "DataWrangling/caddata.RData")
-new<-data.frame("Typical.Chest.Pain"=as.numeric("1"),"Age"=60,"Atypical"=0,"FBS"=0,"HTN"=1,"DM"=1,"EF.TTE"=20, "K"=2,"PR"=2,"ESR"=1,"TG"=2,"Tinversion"=0,"Lymph"=2,"Neut"=2,"St.Depression"=1,"Dyspnea"=1,"Nonanginal"=1,"Region.RWMA2"=1,"VHD.Mild"=1,"PLT"=2,"BMI"=2,"Na"=3)
+#new<-data.frame("Typical.Chest.Pain"=as.numeric("1"),"Age"=60,"Atypical"=0,"FBS"=0,"HTN"=1,"DM"=1,"EF.TTE"=20, "K"=2,"PR"=2,"ESR"=1,"TG"=2,"Tinversion"=0,"Lymph"=2,"Neut"=2,"St.Depression"=1,"Dyspnea"=1,"Nonanginal"=1,"Region.RWMA2"=1,"VHD.Mild"=1,"PLT"=2,"BMI"=2,"Na"=3)
 
 #-----------
 #predict(lda.model,new)
@@ -188,8 +188,7 @@ if (interactive()) {
            req(file)
            validate(need(ext == "csv", "Please upload a csv file"))
            file<-read.csv(file$datapath)
-           #_-----
-           load(file = "DataWrangling/caddata.RData")
+         
            if(is.null(file$Typical.Chest.Pain)){Typical.Chest.Pain<-round(mean(train.df$Typical.Chest.Pain),digits=0)}
            else{Typical.Chest.Pain<-file$Typical.Chest.Pain}
            

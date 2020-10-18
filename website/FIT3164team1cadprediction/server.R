@@ -7,7 +7,6 @@ load(file = "Featuresselected.RData")
 function(input, output) {
   observeEvent(input$button,{
     output$pred<-renderPrint({
-      #    observeEvent(input$button,{
       if(is.null(input$file1)){
         
         if(input$Typical.Chest.Pain==""){Typical.Chest.Pain<-round(mean(train.df$Typical.Chest.Pain),digits=0)}
@@ -96,7 +95,7 @@ function(input, output) {
         validate(need(ext == "csv", "Please upload a csv file"))
         file<-read.csv(file$datapath)
         #_-----
-        load(file = "DataWrangling/caddata.RData")
+       # load(file = "DataWrangling/caddata.RData")
         if(is.null(file$Typical.Chest.Pain)){Typical.Chest.Pain<-round(mean(train.df$Typical.Chest.Pain),digits=0)}
         else{Typical.Chest.Pain<-file$Typical.Chest.Pain}
         
