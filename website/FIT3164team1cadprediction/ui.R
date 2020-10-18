@@ -40,7 +40,7 @@ fluidPage(
       
       fluidRow(
         column(width =6,numericInput("EF.TTE","Ejection Fraction (%; 15-60):",0)),
-        column(width =6,numericInput("K","Blood potassium Content(mEq/lit):",0))), #float
+        column(width =6,numericInput("K","Blood potassium Content(mEq/lit; 3.0-6.6):",0))), #float
       
       fluidRow(
         column(width =6,numericInput("PR","Resting heart rate (bpm; 50-110):",0)),
@@ -71,7 +71,7 @@ fluidPage(
         column(width =6,numericInput("BMI","Body Mass Index (18-41):",0)),
         column(width =6,numericInput("Na","Blood Sodium Content (mEq/lit; 128-156):",0))),
       
-      fileInput("file1","or Upload a CSV File",accept = ".csv"),
+      fileInput("file1","or upload a CSV File",accept = ".csv"),
     
       actionButton("button", "Get the result",width = "100%",style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
       #  submitButton("Submit",width = "100%"),
