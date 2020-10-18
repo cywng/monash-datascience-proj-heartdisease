@@ -11,23 +11,23 @@ function(input, output) {
       if(is.null(input$file1)){
         
         if(input$Typical.Chest.Pain==""){Typical.Chest.Pain<-round(mean(train.df$Typical.Chest.Pain),digits=0)}
-        else{Typical.Chest.Pain<-as.numeric(input$Typical.Chest.Pain)}
+        else{Typical.Chest.Pain<-as.numeric(ifelse(input$Typical.Chest.Pain=="Y",1,0))}
         
         
         if(input$Age==0){Age<-round(mean(train.df$Age),digits=0)}
         else{Age<-input$Age}
         
         if(input$Atypical==""){Atypical<-round(mean(train.df$Atypical),digits=0)}
-        else{Atypical<-as.numeric(input$Atypical)}
+        else{Atypical<-as.numeric(ifelse(input$Atypical=="Y",1,0))}
         
         if(input$FBS==0){FBS<-round(mean(train.df$FBS),digits=0)}
         else{FBS<-input$FBS}
         
         if(input$HTN==""){HTN<-round(mean(train.df$HTN),digits=0)}
-        else{HTN<-as.numeric(input$HTN)}
+        else{HTN<-as.numeric(ifelse(input$HTN=="Y",1,0))}
         
         if(input$DM==""){DM<-round(mean(train.df$DM),digits=0)}
-        else{DM<-as.numeric(input$DM)}
+        else{DM<-as.numeric(ifelse(input$DM=="Y",1,0))}
         
         if(input$EF.TTE==0){EF.TTE<-round(mean(train.df$EF.TTE),digits=0)}
         else{EF.TTE<-input$EF.TTE}
@@ -45,7 +45,7 @@ function(input, output) {
         else{TG<-input$TG}
         
         if(input$Tinversion==""){Tinversion<-round(mean(train.df$Tinversion),digits=0)}
-        else{Tinversion<-as.numeric(input$Tinversion)}
+        else{Tinversion<-as.numeric(ifelse(input$Tinversion=="Y",1,0))}
         
         if(input$Lymph==0){Lymph<-round(mean(train.df$Lymph),digits=0)}
         else{Lymph<-input$Lymph}
@@ -54,19 +54,19 @@ function(input, output) {
         else{Neut<-input$Neut}
         
         if(input$St.Depression==""){St.Depression<-round(mean(train.df$St.Depression),digits=0)}
-        else{St.Depression<-as.numeric(input$St.Depression)}
+        else{St.Depression<-as.numeric(ifelse(input$St.Depression=="Y",1,0))}
         
         if(input$Dyspnea==""){Dyspnea<-round(mean(train.df$Dyspnea),digits=0)}
-        else{Dyspnea<-as.numeric(input$Dyspnea)}
+        else{Dyspnea<-as.numeric(ifelse(input$Dyspnea=="Y",1,0))}
         
         if(input$Nonanginal==""){Nonanginal<-round(mean(train.df$Nonanginal),digits=0)}
-        else{Nonanginal<-as.numeric(input$Nonanginal)}
+        else{Nonanginal<-as.numeric(ifelse(input$Nonanginal=="Y",1,0))}
         
         if(input$Region.RWMA2==""){Region.RWMA2<-round(mean(train.df$Region.RWMA2),digits=0)}
-        else{Region.RWMA2<-as.numeric(input$Region.RWMA2)}
+        else{Region.RWMA2<-as.numeric(ifelse(input$Region.RWMA2=="Y",1,0))}
         
         if(input$VHD.Mild==""){VHD.Mild<-round(mean(train.df$VHD.Mild),digits=0)}
-        else{VHD.Mild<-as.numeric(input$VHD.Mild)}
+        else{VHD.Mild<-as.numeric(ifelse(input$VHD.Mild=="Y",1,0))}
         
         if(input$PLT==0){PLT<-round(mean(train.df$PLT),digits=0)}
         else{PLT<-input$PLT}
@@ -97,7 +97,7 @@ function(input, output) {
         file<-read.csv(file$datapath)
         #_-----
         load(file = "DataWrangling/caddata.RData")
-        if(is.null(file$Typical.Chest.Pain)){Typical.Chest.Pain<-round(mean(train.df$Typical.Chest.Pain),digits=0)}
+        if(is.null(file$Typical.Chest.Pain)){Typical.Chest.Pain<-round(mean(train.df$Typical.Crunhest.Pain),digits=0)}
         else{Typical.Chest.Pain<-file$Typical.Chest.Pain}
         
         if(is.null(file$Age)){Age<-round(mean(train.df$Age),digits=0)}
