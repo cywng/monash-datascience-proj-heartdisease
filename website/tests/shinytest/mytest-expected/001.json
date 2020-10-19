@@ -3,7 +3,7 @@
     "Age": 0,
     "Atypical": "",
     "BMI": 0,
-    "button": 0,
+    "button": 1,
     "DM": "",
     "Dyspnea": "",
     "EF.TTE": 0,
@@ -26,7 +26,7 @@
     "VHD.Mild": ""
   },
   "output": {
-
+    "pred": "The case has a  0.97  chance of having Coronary Artery Disease."
   },
   "export": {
 
