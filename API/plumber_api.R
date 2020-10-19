@@ -49,6 +49,7 @@ function(req){
 #' @param BMI:numeric Body Mass Index (18-41).
 #' @param Na:numeric Sodium content in blood (mEQ/lit; 128-156).
 
+#RWMA 1 not 2, BP.
 #' @get /predict
 #' @html
 #' @response 200 Returns the class (Y or N) prediction from the LDA model; Y = Coronary Artery Disease
