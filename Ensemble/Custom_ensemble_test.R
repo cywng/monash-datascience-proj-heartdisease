@@ -17,7 +17,10 @@ train.df$Cath <- as.factor(ifelse(train.df$Cath == 0,"N","Y"))
 test.df$Cath <- as.factor(ifelse(test.df$Cath == 0,"N","Y"))
 
 generate_ensemble_df <- function(caddataset){
-  #models <-  c(knn.model, lda.model, LR_model, NB_model, RF_model, svmlin.model, svmpoly.model, svmrad.model, nn1) this is some fucked up thing
+  #Input: caddataset - a data frame with features identical to that of the initial CAD data set of size (nrow x 63)
+  #Output: a data frame of size (nrow x 9). Each feature (column) is comprised of the predictions made by that specific model, as factors.
+  #Runtime: Linear
+  
   aggregate_pred.df <- as.data.frame(caddataset$Cath)
   colnames(aggregate_pred.df)=c("Cath")
   #attach predictions
@@ -36,11 +39,15 @@ generate_ensemble_df <- function(caddataset){
 pred.df <- generate_ensemble_df(train.df)
 #====Naive voting ensemble ====
 vote_ensemble <- function(dataset, label="Cath"){
-  #label should be string name of column
+  #Input: dataset - Any data set. 
+  #Input label - A column name to predict values for.
+  #Output: a vector containing the average value of all features for each input row.
+  #Converts Y or N in input df to 1 and 0 respectively.
+  #To be used to take a unweighted vote of columns, aka. vote ensembling when combined with generate_ensemble_df
+  
   df = dataset[,names(dataset) != c(label)]
   num = dim(df)[2]
   numericdf <- data.frame(apply(df, 2,function(x){revalue(x,c("Y"=1,"N"=0),warn_missing = FALSE)}))
-  #change the sum formula here for weignting. Can dot product with weight vector.
   vote = apply(numericdf, 1, function(x) sum(as.numeric(x)))/num
   return(as.factor(ifelse(round(vote) == 0,"N","Y")))
 }
@@ -51,7 +58,8 @@ confusionMatrix(ensem_result,train.df$Cath)
 ensem_result_test <- vote_ensemble(generate_ensemble_df(test.df))
 confusionMatrix(ensem_result_test,test.df$Cath)
 
-#====Train logistic regression on result====
+#====Train logistic regression on result==== #These can be adjusted to give AUC/ROC
+
 #results in errors due to non-convergence as data is mostly uniform
 #1: glm.fit: algorithm did not converge
 #2: In predict.lm(object, newdata, se.fit, scale = 1, type = if (type ==  ... :
@@ -64,7 +72,6 @@ ensem_lr_test=predict(lr_ensem,generate_ensemble_df(test.df))
 confusionMatrix(ensem_lr_test,test.df$Cath)
 
 #====Train RF====
-#this is robust to the strange data that we have left. LDA did not like that some data was all 1.
 
 control <- trainControl(method="repeatedcv", number=10)
 rf_ensem<-train(Cath ~., data = pred.df, method="rf", family = "binomial" ,trControl=control)
