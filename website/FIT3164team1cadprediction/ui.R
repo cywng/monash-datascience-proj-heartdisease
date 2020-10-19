@@ -1,7 +1,7 @@
 library(shiny)
 library(caret)
 load(file = "svm_linear.RData")
-load(file = "svm_train_data.Rdata")
+load(file = "svm_train_data.RData")
 
 Age<-round(mean(svm.train$Age),digits=0)  #
 DM<-as.factor(round(mean(as.numeric(svm.train$DM)),digits=0))#
@@ -51,7 +51,7 @@ fluidPage(
       
       fluidRow(
         #
-        column(width =6,numericInput("BP","BP (blood pressure: mmHg) 90–190:",0)),
+        column(width =6,numericInput("BP","Blood pressure (mmHg; 90–190):",0)),
         #
         column(width =6,numericInput("ESR","Erythrocyte sedimentation rate (mm/h; 1-90):",0))),
       
