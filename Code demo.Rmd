@@ -152,7 +152,7 @@ svm.df <- subset(svm.df, select = c(Age, DM, HTN, BP, Typical.Chest.Pain, Atypic
 ## 3.1 Initialising training settings
 ```{r}
 # set up results table
-result = data.frame(Classifier = c("SVM.Poly", "SVM.Radial", "SVM.Linear", "Random Forest", "Neurual Network", "Naive Bayes", "Logistic Regression", "LDA", "KNN", "GBM", "Decision Tree"), ROC = 0:10, Testing_Accuracy = 0:10, Test_AUC = 0:10)
+result = data.frame(Classifier = c("SVM.Poly", "SVM.Radial", "SVM.Linear", "Random Forest", "Neurual Network", "Naive Bayes", "Logistic Regression", "LDA", "KNN", "GBM", "Decision Tree","AdaBoost Classification Tree", "Boosted Logistic Regression"), ROC = 0:12, Testing_Accuracy = 0:12, Test_AUC = 0:12)
 ```
 ```{r}
 control = trainControl(method = "repeatedcv", 
@@ -173,11 +173,12 @@ svm.test <- svm.df[-train.index.svm,]
 # 3.2 SVM
 ## 3.2.1 SVM Polynomial
 ```{r}
+set.seed(3164)
 # Train SVM polynomial with ROC metric
 svm.poly= train(Cath ~ ., data = svm.train,
             method = "svmPoly",
             trControl = control,
-            tuneGrid = data.frame(degree = c(1,1), scale = c(1,2), C = c(1,3)),#degree = 1, scale = 1, C = 1),
+            tuneGrid = data.frame(degree = c(1,1), scale = c(1,2), C = c(1,3)),
             preProcess = c("pca", "scale", "center"),
             metric = "ROC",
             na.action = na.omit)
@@ -216,11 +217,12 @@ result$Testing_Accuracy[1] = cm.svm.poly$overall[1]
 
 ## 3.2.2 SVM Radial
 ```{r}
+set.seed(3164)
 # Train SVM Radial
 svm.rad= train(Cath ~ ., data = svm.train,
             method = "svmRadial",
             trControl = control,
-            tuneGrid = data.frame(sigma= c(0.01, 0.03,0.05,0.1,0.2,0.3,0.4,0.5,0.6), C = c(1,1,1,1,1,2,2,1,3)),
+            tuneLength = 10,
             preProcess = c("pca", "scale", "center"),
             metric = "ROC",
             na.action = na.omit)
@@ -240,11 +242,12 @@ result$Testing_Accuracy[2] = cm.svm.rad$overall[1]
 
 ## 3.2.3 SVM linear
 ```{r}
+set.seed(3164)
 # Train SVM linear
 svm.l= train(Cath ~ ., data = svm.train,
             method = "svmLinear",
             trControl = control,
-            tuneGrid = data.frame(C = c(0.1,0.3,0.5,0.7,1,1.5,2,2.5,3,3.5)),
+            tuneLength = 10,
             preProcess = c("pca", "scale", "center"),
             metric = "ROC",
             na.action = na.omit)
@@ -296,28 +299,46 @@ result$Test_AUC[2] = svm.rad.ROC$auc
 result$Test_AUC[3] = svm.l.ROC$auc
 ```
 
-```{r}
-# svm try
-svm.try <- train(Cath ~., data = svm.train,
-                 method = "svmRadial",
-                 trControl = control,
-                 preProc = c("center", "scale"),
-                 tuneLength = 8,
-                 metric = "ROC")
-print(svm.try)
-```
-```{r}
-# Test SVM linear
-svm.try.predict = predict(svm.try, svm.test)
-# confusion matrix
-cm.svm.try <- confusionMatrix(svm.try.predict, svm.test$Cath)
-print(cm.svm.try)
-```
-
 #3.4 Random Forest
 ```{r}
 # train the random forest
+rf <- train(Cath ~., data = svm.train,
+                 method = "rf",
+                 trControl = control,
+                 preProc = c("center", "scale"),
+                 tuneLength = 10,
+                 metric = "ROC")
+print(rf)
+```
+```{r}
+# Test the random forest
+rf.predict = predict(rf, svm.test)
+# confusion matrix
+cm.rf <- confusionMatrix(rf.predict, svm.test$Cath)
+print(cm.rf)
+```
 
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[4] = max(rf$results$ROC)
+result$Testing_Accuracy[4] = cm.rf$overall[1]
+# Save the testing ROC for plotting later
+rf.probs = predict(rf,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+rf.ROC = roc(response = svm.test$Cath,
+              predictor = rf.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+```
+3.6 Naive Bayes
+```{r}
+# train Naive Bayes
+nb <- train(Cath ~., data = svm.train,
+                 method = "nb",
+                 trControl = control,
+                 preProc = c("center", "scale"),
+                 tuneLength = 10,
+                 metric = "ROC")
+print(nb)
 ```
 
 # AdaBoost Classification tree
@@ -355,4 +376,39 @@ cm.bg.lr <- confusionMatrix(bg.lr.predict, im.test$Cath.Cad)
 print(cm.bg.lr)
 ```
 
+3.5 Neural Network
+```{r}
+# train the neural network
+cath_index = grep("Cath", colnames(svm.train))
+nn = train(svm.train[, -cath_index], 
+            svm.train$Cath,
+            method = "nnet",
+            trControl = control,
+            preProcess = c("scale", "center"),
+            tuneLength = 5,
+            verbose = F,
+            trace = F
+            metric = "ROC",
+            na.action = na.omit)
+print(nn)
+```
+```{r}
+# testing the neural network
+nn.predict = predict(nn, svm.test)
+# confusion matrix
+cm.nn <- confusionMatrix(nn.predict, svm.test$Cath)
+print(cm.nn)
+```
 
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[5] = max(nn$results$ROC)
+result$Testing_Accuracy[5] = cm.nn$overall[1]
+# plot the testing ROC
+nn.probs = predict(nn,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+nn.ROC = roc(response = svm.test$Cath,
+              predictor = nn.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+plot(nn.ROC,add = TRUE,col = "orange")
+```
