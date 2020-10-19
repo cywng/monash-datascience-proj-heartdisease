@@ -94,7 +94,7 @@ function(input, output) {
         
         
       }
-      #This is for if there is an input file.
+      #This is for if there is an input file. Check for no entry with is.na()
       else{
         file<-input$file1
         
@@ -103,74 +103,74 @@ function(input, output) {
         validate(need(ext == "csv", "Please upload a csv file"))
         file<-read.csv(file$datapath)
         
-        if(is.null(file$Typical.Chest.Pain)){Typical.Chest.Pain<-round(mean(train.df$Typical.Chest.Pain),digits=0)}
+        if(is.na(file$Typical.Chest.Pain)){Typical.Chest.Pain<-round(mean(train.df$Typical.Chest.Pain),digits=0)}
         else{Typical.Chest.Pain<-file$Typical.Chest.Pain}
         
-        if(is.null(file$Age)){Age<-round(mean(train.df$Age),digits=0)}
+        if(is.na(file$Age)){Age<-round(mean(train.df$Age),digits=0)}
         else{Age<-file$Age}
         
-        if(is.null(file$Atypical)){Atypical<-round(mean(train.df$Atypical),digits=0)}
+        if(is.na(file$Atypical)){Atypical<-round(mean(train.df$Atypical),digits=0)}
         else{Atypical<-file$Atypical}
         
-        if(is.null(file$FBS)){FBS<-round(mean(train.df$FBS),digits=0)}
+        if(is.na(file$FBS)){FBS<-round(mean(train.df$FBS),digits=0)}
         else{FBS<-file$FBS}
         
-        if(is.null(file$HTN)){HTN<-round(mean(train.df$HTN),digits=0)}
+        if(is.na(file$HTN)){HTN<-round(mean(train.df$HTN),digits=0)}
         else{HTN<-file$HTN}
         
-        if(is.null(file$DM)){DM<-round(mean(train.df$DM),digits=0)}
+        if(is.na(file$DM)){DM<-round(mean(train.df$DM),digits=0)}
         else{DM<-file$DM}
         
-        if(is.null(file$EF.TTE)){EF.TTE<-round(mean(train.df$EF.TTE),digits=0)}
+        if(is.na(file$EF.TTE)){EF.TTE<-round(mean(train.df$EF.TTE),digits=0)}
         else{EF.TTE<-file$EF.TTE}
         
-        if(is.null(file$K)){K<-round(mean(train.df$K),digits=0)}
+        if(is.na(file$K)){K<-round(mean(train.df$K),digits=0)}
         else{K<-file$K}
         
-        if(is.null(file$PR)){PR<-round(mean(train.df$PR),digits=0)}
+        if(is.na(file$PR)){PR<-round(mean(train.df$PR),digits=0)}
         else{PR<-file$PR}
         
-        if(is.null(file$ESR)){ESR<-round(mean(train.df$ESR),digits=0)}
+        if(is.na(file$ESR)){ESR<-round(mean(train.df$ESR),digits=0)}
         else{ESR<-file$ESR}
         
-        if(is.null(file$TG)){TG<-round(mean(train.df$TG),digits=0)}
+        if(is.na(file$TG)){TG<-round(mean(train.df$TG),digits=0)}
         else{TG<-file$TG}
         
-        if(is.null(file$Tinversion)){Tinversion<-round(mean(train.df$Tinversion),digits=0)}
+        if(is.na(file$Tinversion)){Tinversion<-round(mean(train.df$Tinversion),digits=0)}
         else{Tinversion<-file$Tinversion}
         
         
-        if(is.null(file$Lymph)){Lymph<-round(mean(train.df$Lymph),digits=0)}
+        if(is.na(file$Lymph)){Lymph<-round(mean(train.df$Lymph),digits=0)}
         else{Lymph<-file$Lymph}
         
-        if(is.null(file$Neut)){Neut<-round(mean(train.df$Neut),digits=0)}
+        if(is.na(file$Neut)){Neut<-round(mean(train.df$Neut),digits=0)}
         else{Neut<-file$Neut}
         
         if(is.null(file$St.Depression)){St.Depression<-round(mean(train.df$St.Depression),digits=0)}
         else{St.Depression<-file$St.Depression}
         
         
-        if(is.null(file$Dyspnea)){Dyspnea<-round(mean(train.df$Dyspnea),digits=0)}
+        if(is.na(file$Dyspnea)){Dyspnea<-round(mean(train.df$Dyspnea),digits=0)}
         else{Dyspnea<-file$Dyspnea}
         
-        if(is.null(file$Nonanginal)){Nonanginal<-round(mean(train.df$Nonanginal),digits=0)}
+        if(is.na(file$Nonanginal)){Nonanginal<-round(mean(train.df$Nonanginal),digits=0)}
         else{Nonanginal<-file$Nonanginal}
         
         
-        if(is.null(file$Region.RWMA2)){Region.RWMA2<-round(mean(train.df$Region.RWMA2),digits=0)}
+        if(is.na(file$Region.RWMA2)){Region.RWMA2<-round(mean(train.df$Region.RWMA2),digits=0)}
         else{Region.RWMA2<-file$Region.RWMA2}
         
-        if(is.null(file$VHD.Mild)){VHD.Mild<-round(mean(train.df$VHD.Mild),digits=0)}
+        if(is.na(file$VHD.Mild)){VHD.Mild<-round(mean(train.df$VHD.Mild),digits=0)}
         else{VHD.Mild<-file$VHD.Mild}
         
-        if(is.null(file$PLT)){PLT<-round(mean(train.df$PLT),digits=0)}
+        if(is.na(file$PLT)){PLT<-round(mean(train.df$PLT),digits=0)}
         else{PLT<-file$PLT}
         
         
-        if(is.null(file$BMI)){BMI<-round(mean(train.df$BMI),digits=0)}
+        if(is.na(file$BMI)){BMI<-round(mean(train.df$BMI),digits=0)}
         else{BMI<-file$BMI}
         
-        if(is.null(file$Na)){Na<-round(mean(train.df$Na),digits=0)}
+        if(is.na(file$Na)){Na<-round(mean(train.df$Na),digits=0)}
         else{Na<-file$Na}
         
         

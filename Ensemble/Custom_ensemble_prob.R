@@ -21,6 +21,15 @@ vote_ensemble <- function(dataset, label="Cath", prob='class',input='factor'){
   #label should be string name of column, or FALSE
   #prob = class means we want probabilities out.
   #input = factor means we putting in factors instead of probabilities.
+  
+  
+  #Input: dataset - Any data set. 
+  #Input: label - A column name to predict values for.
+  #Input: prob - type of output. prob='class' returns 1 or 0, else probability between 0 and 1
+  #Input: input - The type of inputs. Input ='factor' indicates that inputs are factors, else numeric.
+  #Output: a vector containing the average value of all features for each input row.
+  #To be used to take a unweighted vote of columns, aka. vote ensembling when combined with generate_ensemble_df
+  
   if(label==FALSE){
     df = dataset
   }  else {
@@ -38,11 +47,13 @@ vote_ensemble <- function(dataset, label="Cath", prob='class',input='factor'){
 
 #====Generate a data frame of probabilities====
 generate_ensemble_df <- function(caddataset){
-  #models <-  c(knn.model, lda.model, LR_model, NB_model, RF_model, svmlin.model, svmpoly.model, svmrad.model, nn1) this is some fucked up thing
-  aggregate_pred.df <- as.data.frame(caddataset$Cath)
   
-  #attach predictions
-  #only has two??
+  #Input: caddataset - a data frame with features identical to that of the initial CAD data set of size (nrow x 63)
+  #Output: a data frame of size (nrow x 7). Each feature (column) is comprised of the predictions made by that specific model.
+  #predictions are given as a probability between 0 and 1, with the three SVM models aggregated.
+  #Runtime: Linear
+  
+  aggregate_pred.df <- as.data.frame(caddataset$Cath)
   aggregate_pred.df$knnres <-  predict(knn.model, caddataset[knn.features], type="prob")$Y
   aggregate_pred.df$ldares <-  predict(lda.model, caddataset[lda.features$optVariables], type="prob")$Y
   aggregate_pred.df$lrres <-  predict(LR_model, caddataset[lr.features$optVariables], type="prob")[,2]

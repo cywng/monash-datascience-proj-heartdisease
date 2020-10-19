@@ -28,11 +28,11 @@ function(req){
 #' predict Coronary Artery Disease with an LDA model.
 #' @param Typical.Chest.Pain:numeric Presence of chest pain (1 for yes, 0 for no).
 #' @param Age:numeric The age of the patient.
-#' @param Atypical:int Atypical presence (1 for yes, 0 for no).
+#' @param Atypical:int Atypical pulse (1 for yes, 0 for no).
 #' @param FBS:numeric Fasting blood sugar level (mg/dl, 62-400).
 #' @param HTN:int Presence of hypertension (1 for yes, 0 for no).
 #' @param DM:int Presence of diabetes mellitus (1 for yes, 0 for no).
-#' @param EF.TTE:numeric Level of EF.TTE (15-60).
+#' @param EF.TTE:numeric Level of Ejection Fraction (15-60).
 #' @param K:numeric Potassium content in blood (mEq/lit; 3.0-6.6).
 #' @param PR:numeric Resting heart rate (bpm; 50-110).
 #' @param ESR:numeric Erythrocyte sedimentation rate (mm/h; 1-90).
@@ -74,5 +74,5 @@ calculate_prediction <- function(Typical.Chest.Pain, Age, Atypical, FBS, HTN, DM
 
   # predict and return result
   pred_rf <<- predict(lda.model, input_data, type="prob")$Y
-  paste("----------------\nTest case has CAD with ", as.character(pred_rf), " confidence. \n----------------\n")
+  paste("----------------\nThe case has a ",as.character(pred_rf)," chance of having Coronary Artery Disease.\n----------------\n")
 }
