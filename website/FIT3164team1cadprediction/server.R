@@ -2,7 +2,7 @@ library(shiny)
 library(Hmisc)
 library
 load(file = "svm_linear.RData")
-load(file = "svm_train_data.Rdata")
+load(file = "svm_train_data.RData")
 
 
 
