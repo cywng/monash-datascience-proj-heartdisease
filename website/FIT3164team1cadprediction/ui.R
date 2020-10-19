@@ -1,12 +1,13 @@
 library(shiny)
 library(caret)
+library(kernlab)
 load(file = "svm_linear.RData")
 load(file = "svm_train_data.RData")
 
 Age<-round(mean(svm.train$Age),digits=0)  #
 DM<-as.factor(round(mean(as.numeric(svm.train$DM)),digits=0))#
 HTN<-as.factor(round(mean(as.numeric(svm.train$HTN)),digits=0))#
-BP<-round(mean(svm.train$BP),digits=0)     #BP (blood pressure: mmHg) 90–190
+BP<-round(mean(svm.train$BP),digits=0)
 Typical.Chest.Pain<-as.factor(round(mean(as.numeric(svm.train$Typical.Chest.Pain)),digits=0))
 Atypical<-as.factor(round(mean(as.numeric(svm.train$Atypical)),digits=0))
 FBS<-round(mean(svm.train$FBS),digits=0)#
@@ -19,8 +20,8 @@ Region.RWMA<-as.factor(round(mean(as.numeric(svm.train$Region.RWMA)),digits=0))
 fluidPage(
   h1("Heart Disease Prediction",align = "center"),#titlePanel
   p("This is a tool to aid the diagnosis of Coronary Artery Disease. Please input the patient's information into the fields, or upload a CSV."),
-  p("Typical values are in brackets. An entry of 0 for a numeric category is treated as a null input. Blank entries are acceptable, but will result in a lower confidence than displayed."),
-  # titlePanel("Heart Disease Prediction"),
+  p("Typical values have been displayed brackets. An entry of 0 for a numeric category is treated as a null input. Blank entries or entries outside the range are acceptable, but will result in a lower confidence than displayed."),
+
   br(),
   
   sidebarLayout(
