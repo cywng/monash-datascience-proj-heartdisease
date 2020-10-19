@@ -2,7 +2,9 @@
 title: "Code Demo"
 author: "Yupeng Miao"
 date: "2020/10/14"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -152,7 +154,7 @@ svm.df <- subset(svm.df, select = c(Age, DM, HTN, BP, Typical.Chest.Pain, Atypic
 ## 3.1 Initialising training settings
 ```{r}
 # set up results table
-result = data.frame(Classifier = c("SVM.Poly", "SVM.Radial", "SVM.Linear", "Random Forest", "Neurual Network", "Naive Bayes", "Logistic Regression", "LDA", "KNN", "GBM", "Decision Tree","AdaBoost Classification Tree", "Boosted Logistic Regression"), ROC = 0:12, Testing_Accuracy = 0:12, Test_AUC = 0:12)
+result = data.frame(Classifier = c("SVM.Poly", "SVM.Radial", "SVM.Linear", "Random Forest", "Neurual Network", "Naive Bayes", "Logistic Regression", "LDA", "KNN", "GBM", "Decision Tree","AdaBoost Classification Tree", "Boosted Logistic Regression"), Training_ROC = 0:12, Testing_Accuracy = 0:12, Test_AUC = 0:12)
 ```
 ```{r}
 control = trainControl(method = "repeatedcv", 
@@ -653,4 +655,3 @@ legend("bottomright", legend = c("svm.poly","svm.rad", "svm.l", "Random Forest",
        col = c("#C0392B", "#E74C3C", "#D35400", "#9B59B6", "#8E44AD", "#2980B9", "#3498DB", "#1ABC9C", "#16A085", "#27AE60", "#2ECC71", 
                "#F1C40F", "#F39C12"),lwd = 2, cex = 0.8)
 ```
-
