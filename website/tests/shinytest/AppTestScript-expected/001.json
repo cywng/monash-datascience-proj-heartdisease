@@ -1,0 +1,34 @@
+{
+  "input": {
+    "Age": 0,
+    "Atypical": "",
+    "BMI": 0,
+    "button": 0,
+    "DM": "",
+    "Dyspnea": "",
+    "EF.TTE": 0,
+    "ESR": 0,
+    "FBS": 0,
+    "file1": null,
+    "HTN": "",
+    "K": 0,
+    "Lymph": 0,
+    "Na": 0,
+    "Neut": 0,
+    "Nonanginal": "",
+    "PLT": 0,
+    "PR": 0,
+    "Region.RWMA2": "",
+    "St.Depression": "",
+    "TG": 0,
+    "Tinversion": "",
+    "Typical.Chest.Pain": "",
+    "VHD.Mild": ""
+  },
+  "output": {
+
+  },
+  "export": {
+
+  }
+}
