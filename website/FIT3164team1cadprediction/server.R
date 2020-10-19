@@ -5,18 +5,6 @@ load(file = "svm_linear.RData")
 load(file = "svm_train_data.Rdata")
 
 
-Age<-round(mean(svm.train$Age),digits=0)  #
-DM<-as.factor(round(mean(as.numeric(svm.train$DM)),digits=0))#
-HTN<-as.factor(round(mean(as.numeric(svm.train$HTN)),digits=0))#
-BP<-round(mean(svm.train$BP),digits=0)     #BP (blood pressure: mmHg) 90–190
-Typical.Chest.Pain<-as.factor(round(mean(as.numeric(svm.train$Typical.Chest.Pain)),digits=0))
-Atypical<-as.factor(round(mean(as.numeric(svm.train$Atypical)),digits=0))
-FBS<-round(mean(svm.train$FBS),digits=0)#
-TG<-round(mean(svm.train$TG),digits=0)#
-ESR<-round(mean(svm.train$ESR),digits=0)#
-K<-round(mean(svm.train$K),digits=0)#
-EF.TTE<-round(mean(svm.train$EF.TTE),digits=0)#
-Region.RWMA<-as.factor(round(mean(as.numeric(svm.train$Region.RWMA)),digits=0))
 
 #to test changes locally set wd to folder containing server.R and ui.R: library(shiny); runapp()
 #to push changes: library(rsconnect); deployApp()
@@ -88,41 +76,41 @@ function(input, output) {
         validate(need(ext == "csv", "Please upload a csv file"))
         file<-read.csv(file$datapath)
         
-        if(is.na(file$Typical.Chest.Pain)){Typical.Chest.Pain<-as.factor(round(mean(as.numeric(svm.train$Typical.Chest.Pain)-1),digits=0))}
+        if(is.na(file$Typical.Chest.Pain) || is.null(file$Typical.Chest.Pain) ){Typical.Chest.Pain<-as.factor(round(mean(as.numeric(svm.train$Typical.Chest.Pain)-1),digits=0))}
         else{as.factor(Typical.Chest.Pain<-file$Typical.Chest.Pain)}#
         
-        if(is.na(file$Age)){Age<-round(mean(svm.train$Age),digits=0)}
+        if(is.na(file$Age) || is.null(file$Age) ){Age<-round(mean(svm.train$Age),digits=0)}
         else{Age<-file$Age} #
         
-        if(is.na(file$Atypical)){Atypical<-"N"}
+        if(is.na(file$Atypical) || is.null(file$Atypical) ){Atypical<-"N"}
         else{Atypical<-as.factor(file$Atypical)} #
         
-        if(is.na(file$FBS)){FBS<-round(mean(svm.train$FBS),digits=0)}
+        if(is.na(file$FBS) || is.null(file$FBS) ){FBS<-round(mean(svm.train$FBS),digits=0)}
         else{FBS<-file$FBS} #
         
-        if(is.na(file$HTN)){HTN<-as.factor(round(mean(as.numeric(svm.train$HTN)-1),digits=0))}
+        if(is.na(file$HTN) || is.null(file$HTN) ){HTN<-as.factor(round(mean(as.numeric(svm.train$HTN)-1),digits=0))}
         else{HTN<-as.factor(as.numeric(file$HTN))} #
         
-        if(is.na(file$DM)){DM<-round(mean(svm.train$DM),digits=0)}
+        if(is.na(file$DM)  || is.null(file$DM)){DM<-as.factor(round(mean(as.numeric(svm.train$DM)-1),digits=0))}
         else{DM<-as.factor(as.numeric(file$DM))} #
         
-        if(is.na(file$EF.TTE)){EF.TTE<-round(mean(svm.train$EF.TTE),digits=0)}
+        if(is.na(file$EF.TTE) || is.null(file$EF.TTE)){EF.TTE<-round(mean(svm.train$EF.TTE),digits=0)}
         else{EF.TTE<-file$EF.TTE}#
         
-        if(is.na(file$K)){K<-round(mean(svm.train$K),digits=0)}
+        if(is.na(file$K)|| is.null(file$K)){K<-round(mean(svm.train$K),digits=0)}
         else{K<-file$K} #
         
         if(is.na(file$BP) || is.null(file$BP)){BP<-round(mean(svm.train$BP),digits=0)}
         else{BP<-file$BP} #
         
-        if(is.na(file$ESR)){ESR<-round(mean(svm.train$ESR),digits=0)}
+        if(is.na(file$ESR) || is.null(file$ESR)){ESR<-round(mean(svm.train$ESR),digits=0)}
         else{ESR<-file$ESR}  #
         
-        if(is.na(file$TG)){TG<-round(mean(svm.train$TG),digits=0)}
+        if(is.na(file$TG)|| is.null(file$TG)){TG<-round(mean(svm.train$TG),digits=0)}
         else{TG<-file$TG} #
         
         
-        if(is.na(file$Region.RWMA)){Region.RWMA<-as.factor(round(mean(as.numeric(svm.train$Region.RWMA)-1),digits=0))}
+        if(is.na(file$Region.RWMA)|| is.null(file$Region.RWMA)){Region.RWMA<-as.factor(round(mean(as.numeric(svm.train$Region.RWMA)-1),digits=0))}
         else{Region.RWMA<-as.factor(file$Region.RWMA)}
         
         
