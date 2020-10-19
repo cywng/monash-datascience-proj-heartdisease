@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r message=FALSE}
 library(ggplot2)
 library(caret)
 library(xlsx)
@@ -278,20 +278,16 @@ svm.poly.ROC = roc(response = svm.test$Cath,
               predictor = svm.poly.probs$Cad,
               levels = levels(svm.test$Cath),
               percent = T)
-plot(svm.poly.ROC,type = "S",col = "red")
 
 svm.rad.ROC = roc(response = svm.test$Cath,
               predictor = svm.rad.probs$Cad,
               levels = levels(svm.test$Cath),
               percent = T)
-plot(svm.rad.ROC,add = TRUE,col = "green")
 
 svm.l.ROC = roc(response = svm.test$Cath,
               predictor = svm.l.probs$Cad,
               levels = levels(svm.test$Cath),
               percent = T)
-plot(svm.l.ROC,add = TRUE,col = "blue")
-legend("bottomright", legend = c("svm.poly","svm.rad", "svm.l"), col = c("red", "green", "blue"),lwd = 2)
 ```
 ```{r}
 result$Test_AUC[1] = svm.poly.ROC$auc
@@ -322,60 +318,15 @@ print(cm.rf)
 # store the ROC and Testing accuracy to the results table
 result$ROC[4] = max(rf$results$ROC)
 result$Testing_Accuracy[4] = cm.rf$overall[1]
+
 # Save the testing ROC for plotting later
 rf.probs = predict(rf,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
 rf.ROC = roc(response = svm.test$Cath,
               predictor = rf.probs$Cad,
               levels = levels(svm.test$Cath),
               percent = T)
+result$Test_AUC[4] = rf.ROC$auc
 ```
-3.6 Naive Bayes
-```{r}
-# train Naive Bayes
-nb <- train(Cath ~., data = svm.train,
-                 method = "nb",
-                 trControl = control,
-                 preProc = c("center", "scale"),
-                 tuneLength = 10,
-                 metric = "ROC")
-print(nb)
-```
-
-# AdaBoost Classification tree
-```{r}
-adaB = train(Cath.Cad ~ ., data = im.train,
-            method = "AdaBoost.M1",
-            tuneGrid = data.frame(mfinal = (1:3)*5, maxdepth = c(5,5,5), coeflearn = c("Breiman", "Freund", "Zhu")),
-            preProcess = c("scale", "center"),
-            na.action = na.omit)
-```
-
-# Testing AdaBoost Claaification tree
-```{r}
-adab.tree.predict = predict(adaB, im.test)
-# confusion matrix
-cm.adab.tree <- confusionMatrix(adab.tree.predict, im.test$Cath.Cad)
-print(cm.adab.tree)
-```
-
-# Boosted Logistic Regression
-```{r}
-lg.boost = train(Cath.Cad ~ ., data = im.train,
-            method = "LogitBoost",
-            tuneGrid = data.frame(nIter = c(5,10,20,50)),
-            trControl = parameters,
-            preProcess = c("scale", "center"),
-            na.action = na.omit)
-```
-
-# Testing Boosted logistic regression
-```{r}
-bg.lr.predict = predict(lg.boost, im.test)
-# confusion matrix
-cm.bg.lr <- confusionMatrix(bg.lr.predict, im.test$Cath.Cad)
-print(cm.bg.lr)
-```
-
 3.5 Neural Network
 ```{r}
 # train the neural network
@@ -387,7 +338,7 @@ nn = train(svm.train[, -cath_index],
             preProcess = c("scale", "center"),
             tuneLength = 5,
             verbose = F,
-            trace = F
+            trace = F,
             metric = "ROC",
             na.action = na.omit)
 print(nn)
@@ -410,5 +361,296 @@ nn.ROC = roc(response = svm.test$Cath,
               predictor = nn.probs$Cad,
               levels = levels(svm.test$Cath),
               percent = T)
-plot(nn.ROC,add = TRUE,col = "orange")
+result$Test_AUC[5] = nn.ROC$auc
 ```
+3.6 Naive Bayes
+```{r message = FALSE}
+set.seed(3164)
+# train Naive Bayes
+nb <- train(Cath ~., data = svm.train,
+                 method = "nb",
+                 trControl = control,
+                 preProc = c("center", "scale"),
+                 tuneGrid = data.frame(fL = 0, usekernel = T, adjust = 1),
+                 metric = "ROC")
+print(nb)
+```
+```{r message=FALSE}
+# Test the Naive Bayes
+nb.predict = predict(nb, svm.test)
+# confusion matrix
+cm.nb <- confusionMatrix(nb.predict, svm.test$Cath)
+print(cm.nb)
+```
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[6] = max(nb$results$ROC)
+result$Testing_Accuracy[6] = cm.nb$overall[1]
+
+# Save the testing ROC for plotting later
+nb.probs = predict(nb,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+nb.ROC = roc(response = svm.test$Cath,
+              predictor = nb.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+result$Test_AUC[6] = nb.ROC$auc
+```
+
+# 3.7 Logistic Regression
+```{r}
+set.seed(3164)
+# train the logistic regression
+lr <- train(Cath ~., data = svm.train,
+                 method = "glm",
+                 family = "binomial",
+                 trControl = control,
+                 preProc = c("center", "scale"),
+                 tuneLength = 10,
+                 metric = "ROC")
+print(lr)
+```
+```{r}
+# Test the logistic regression
+lr.predict = predict(lr, svm.test)
+# confusion matrix
+cm.lr <- confusionMatrix(lr.predict, svm.test$Cath)
+print(cm.lr)
+```
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[7] = max(lr$results$ROC)
+result$Testing_Accuracy[7] = cm.lr$overall[1]
+
+# Save the testing ROC for plotting later
+lr.probs = predict(lr,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+lr.ROC = roc(response = svm.test$Cath,
+              predictor = lr.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+result$Test_AUC[7] = lr.ROC$auc
+```
+
+# 3.8 LDA
+```{r}
+set.seed(3164)
+# train the LDA
+lda <- train(Cath ~., data = svm.train,
+                 method = "lda",
+                 trControl = control,
+                 preProc = c("center", "scale"),
+                 tuneLength = 10,
+                 metric = "ROC")
+print(lda)
+```
+```{r}
+# Test the lda
+lda.predict = predict(lda, svm.test)
+# confusion matrix
+cm.lda <- confusionMatrix(lda.predict, svm.test$Cath)
+print(cm.lda)
+```
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[8] = max(lda$results$ROC)
+result$Testing_Accuracy[8] = cm.lda$overall[1]
+
+# Save the testing ROC for plotting later
+lda.probs = predict(lda,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+lda.ROC = roc(response = svm.test$Cath,
+              predictor = lda.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+result$Test_AUC[8] = lda.ROC$auc
+```
+3.8 KNN
+```{r}
+set.seed(3164)
+# train the knn
+knn <- train(Cath ~., data = svm.train,
+                 method = "knn",
+                 trControl = control,
+                 preProc = c("center", "scale"),
+                 tuneLength = 10,
+                 metric = "ROC")
+print(knn)
+```
+```{r}
+# Test the knn
+knn.predict = predict(knn, svm.test)
+# confusion matrix
+cm.knn <- confusionMatrix(knn.predict, svm.test$Cath)
+print(cm.knn)
+```
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[9] = max(knn$results$ROC)
+result$Testing_Accuracy[9] = cm.knn$overall[1]
+
+# Save the testing ROC for plotting later
+knn.probs = predict(knn,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+knn.ROC = roc(response = svm.test$Cath,
+              predictor = knn.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+result$Test_AUC[9] = knn.ROC$auc
+```
+3.10 GBM
+```{r}
+set.seed(3164)
+# train the GBM
+gbm <- train(Cath ~., data = svm.train,
+                 method = "gbm",
+                 trControl = control,
+                 verbose = FALSE,
+                 preProc = c("center", "scale"),
+                 tuneLength = 10,
+                 metric = "ROC")
+print(gbm)
+```
+```{r}
+# Test the gbm
+gbm.predict = predict(gbm, svm.test)
+# confusion matrix
+cm.gbm <- confusionMatrix(gbm.predict, svm.test$Cath)
+print(cm.gbm)
+```
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[10] = max(gbm$results$ROC)
+result$Testing_Accuracy[10] = cm.gbm$overall[1]
+
+# Save the testing ROC for plotting later
+gbm.probs = predict(gbm,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+gbm.ROC = roc(response = svm.test$Cath,
+              predictor = gbm.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+result$Test_AUC[10] = gbm.ROC$auc
+```
+# Decision Tree
+```{r message=FALSE}
+set.seed(3164)
+# train the decision tree
+dt <- train(Cath ~., data = svm.train,
+                 method = "C5.0",
+                 trControl = control,
+                 verbose = FALSE,
+                 preProc = c("center", "scale"),
+                 tuneLength = 10,
+                 metric = "ROC")
+print(dt)
+```
+```{r}
+# Test the decision tree
+dt.predict = predict(dt, svm.test)
+# confusion matrix
+cm.dt <- confusionMatrix(dt.predict, svm.test$Cath)
+print(cm.dt)
+```
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[11] = max(dt$results$ROC)
+result$Testing_Accuracy[11] = cm.dt$overall[1]
+
+# Save the testing ROC for plotting later
+dt.probs = predict(dt,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+dt.ROC = roc(response = svm.test$Cath,
+              predictor = dt.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+result$Test_AUC[11] = dt.ROC$auc
+```
+# 3.12 AdaBoost Classification tree
+```{r}
+set.seed(3164)
+# train adaBoost Classification Tree
+adaB = train(Cath ~ ., data = svm.train,
+            method = "AdaBoost.M1",
+            tuneGrid = data.frame(mfinal = (1:3)*5, maxdepth = c(5,5,5), coeflearn = c("Breiman", "Freund", "Zhu")),
+            preProcess = c("scale", "center"),
+            na.action = na.omit)
+print(adaB)
+```
+
+
+```{r}
+# Testing AdaBoost Classification tree
+adab.tree.predict = predict(adaB, svm.test)
+# confusion matrix
+cm.adab.tree <- confusionMatrix(adab.tree.predict, svm.test$Cath)
+print(cm.adab.tree)
+```
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[12] = paste(as.character(max(adaB$results$Accuracy)), "(Accuracy)", sep = " ")
+result$Testing_Accuracy[12] = cm.adab.tree$overall[1]
+
+# Save the testing ROC for plotting later
+adab.probs = predict(adaB,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+adab.ROC = roc(response = svm.test$Cath,
+              predictor = adab.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+result$Test_AUC[12] = adab.ROC$auc
+```
+# 3.12 Boosted Logistic Regression
+```{r}
+set.seed(3164)
+# train Boosted Logistic Regression
+blr = train(Cath ~ ., data = svm.train,
+            method = "LogitBoost",
+            tuneGrid = data.frame(nIter = c(5,10,20,50)),
+            trControl = control,
+            preProcess = c("scale", "center"),
+            metric = "ROC",
+            na.action = na.omit)
+print(blr)
+```
+
+```{r}
+# Testing Boosted logistic regression
+blr.predict = predict(blr, svm.test)
+# confusion matrix
+cm.blr <- confusionMatrix(blr.predict, svm.test$Cath)
+print(cm.blr)
+```
+```{r}
+# store the ROC and Testing accuracy to the results table
+result$ROC[13] = max(blr$results$ROC)
+result$Testing_Accuracy[13] = cm.blr$overall[1]
+
+# Save the testing ROC for plotting later
+blr.probs = predict(blr,svm.test[,!names(svm.test) %in% c("Cath")],type = "prob")
+blr.ROC = roc(response = svm.test$Cath,
+              predictor = blr.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+result$Test_AUC[13] = blr.ROC$auc
+```
+4 Review the Results and Plotting the ROC
+```{r}
+# view the results
+print(result)
+```
+```{r}
+# ploting the ROC
+plot(svm.poly.ROC,type = "S",col = "#C0392B")
+plot(svm.rad.ROC,add = TRUE,col = "#E74C3C")
+plot(svm.l.ROC,add = TRUE,col = "#D35400")
+plot(rf.ROC,add = TRUE,col = "#9B59B6")
+plot(nn.ROC,add = TRUE,col = "#8E44AD")
+plot(nb.ROC,add = TRUE,col = "#2980B9")
+plot(lr.ROC,add = TRUE,col = "#3498DB")
+plot(lda.ROC,add = TRUE,col = "#1ABC9C")
+plot(knn.ROC,add = TRUE,col = "#16A085")
+plot(gbm.ROC,add = TRUE,col = "#27AE60")
+plot(dt.ROC,add = TRUE,col = "#2ECC71")
+plot(adab.ROC,add = TRUE,col = "#F1C40F")
+plot(blr.ROC,add = TRUE,col = "#F39C12")
+
+legend("bottomright", legend = c("svm.poly","svm.rad", "svm.l", "Random Forest", "Neural Network", "Naive Bayes", 
+                                 "Logistic Regression", "LDA", "KNN", "GBM", "Decision Tree", "AdaBoost CT", "Boosted Logistic regression"), 
+       col = c("#C0392B", "#E74C3C", "#D35400", "#9B59B6", "#8E44AD", "#2980B9", "#3498DB", "#1ABC9C", "#16A085", "#27AE60", "#2ECC71", 
+               "#F1C40F", "#F39C12"),lwd = 2, cex = 0.8)
+```
+
