@@ -27,16 +27,16 @@ fluidPage(
   sidebarLayout(
     sidebarPanel (
       fluidRow(
-        column(width =6 ,selectInput("Typical.Chest.Pain","Presence of chest pain:",c("","Y","N"),multiple = F,selected =NULL)),
+        column(width =6 ,selectInput("Typical.Chest.Pain","Presence of chest pain:",c("Unknown","Yes","No"),multiple = F,selected =NULL)),
         column(width =6 ,numericInput("Age","Age (30-86):",0))),
       
       fluidRow(
-        column(width =6, selectInput("Atypical","Atypical Pulse:",c("","Y","N"),multiple = F,selected =NULL)), #N,Y
+        column(width =6, selectInput("Atypical","Atypical Pulse:",c("Unknown","Yes","No"),multiple = F,selected =NULL)), #N,Y
         column(width =6,numericInput("FBS","Fasting blood sugar level (mg/dl; 62-400):",0))),
       
       fluidRow(
-        column(width =6,selectInput("HTN","Hypertension:",c("","Y","N"),multiple = F,selected =NULL)),
-        column(width =6,selectInput("DM","Diabetes Mellitus:",c("","Y","N"),multiple = F,selected =NULL))),
+        column(width =6,selectInput("HTN","Hypertension:",c("Unknown","Yes","No"),multiple = F,selected =NULL)),
+        column(width =6,selectInput("DM","Diabetes Mellitus:",c("Unknown","Yes","No"),multiple = F,selected =NULL))),
       
       fluidRow(
         column(width =6,numericInput("EF.TTE","Ejection Fraction (%; 15-60):",0)),
@@ -44,26 +44,26 @@ fluidPage(
       
       fluidRow(
         column(width =6,numericInput("PR","Resting heart rate (bpm; 50-110):",0)),
-        column(width =6,numericInput("ESR","Erythrocyte sedimentation rate (mm/h; 1-90:",0))),
+        column(width =6,numericInput("ESR","Erythrocyte sedimentation rate (mm/h; 1-90):",0))),
       
       fluidRow(
         column(width =6,numericInput("TG","Blood triclyceride concentration (mg/dl; 35-1050):",0)),
-        column(width =6,selectInput("Tinversion","Tinversion in ECG:",c("","Y","N"),multiple = F,selected =NULL))),
+        column(width =6,selectInput("Tinversion","Tinversion in ECG:",c("Unknown","Yes","No"),multiple = F,selected =NULL))),
       
       fluidRow(
         column(width =6,numericInput("Lymph","Lymphocyte percent (%; 7-60):",0)),
         column(width =6,numericInput("Neut","Neutrophil percent (%; 32-89):",0))),
       
       fluidRow(
-        column(width =6,selectInput("St.Depression","ST Depression in ECG:",c("","Y","N"),multiple = F,selected =NULL)),
-        column(width =6,selectInput("Dyspnea","Presence of dyspnea:",c("","Y","N"),multiple = F,selected =NULL))),#N,Y
+        column(width =6,selectInput("St.Depression","ST Depression in ECG:",c("Unknown","Yes","No"),multiple = F,selected =NULL)),
+        column(width =6,selectInput("Dyspnea","Presence of dyspnea:",c("Unknown","Yes","No"),multiple = F,selected =NULL))),#N,Y
       
       fluidRow(
-        column(width =6,selectInput("Nonanginal","Nonanginal chest pain:",c("","Y","N"),multiple = F,selected =NULL)), # N,y
-        column(width =6,selectInput("Region.RWMA2","Regional wall motion abnormality in heart region 2:",c("","Y","N"),multiple = F,selected =NULL))),#region,RWAMA:023,
+        column(width =6,selectInput("Nonanginal","Nonanginal chest pain:",c("Unknown","Yes","No"),multiple = F,selected =NULL)), # N,y
+        column(width =6,selectInput("Region.RWMA2","Regional wall motion abnormality in heart region 2:",c("Unknown","Yes","No"),multiple = F,selected =NULL))),#region,RWAMA:023,
       
       fluidRow(
-        column(width =6,selectInput("VHD.Mild","Mild valvular heart disease:",c("","Y","N"),multiple = F,selected =NULL)), #
+        column(width =6,selectInput("VHD.Mild","Mild valvular heart disease:",c("Unknown","Yes","No"),multiple = F,selected =NULL)), #
         column(width =6,numericInput("PLT","Platelet count (25-742):",0))),
       
       
@@ -73,7 +73,7 @@ fluidPage(
       
       fileInput("file1","or upload a CSV File",accept = ".csv"),
     
-      actionButton("button", "Get the result",width = "100%",style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
+      actionButton("button", "Get prediction",width = "100%",style="color: #fff; background-color: #337ab7; border-color: #2e6da4"),
       #  submitButton("Submit",width = "100%"),
       width="100%"),
     mainPanel(
