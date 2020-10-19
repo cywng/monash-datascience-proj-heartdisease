@@ -35,8 +35,8 @@ for (i in 1:22) {
 }
 
 #==== convert to json ====
-input_data_pos = test.df[1,][lda.model$finalModel$xNames]
-input_data_neg = test.df[10,][lda.model$finalModel$xNames]
+input_data_pos = svm.train[1,]
+input_data_neg = svm.train[6,]
 #first entry as our test data
 
 library(rjson)
