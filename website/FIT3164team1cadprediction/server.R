@@ -24,7 +24,7 @@ function(input, output) {
         else{Age<-input$Age}#
         
         if(input$Atypical=="Unknown"){Atypical<-"N"}
-        else{Atypical<-as.factor( as.numeric(ifelse(input$Atypical=="Yes",1,0)))} #
+        else{Atypical<-as.factor( ifelse(input$Atypical=="Yes","Y","N"))} #
         
         if(input$FBS==0 || is.na(input$FBS)){FBS<-round(mean(svm.train$FBS),digits=0)}
         else{FBS<-input$FBS} #
@@ -63,8 +63,6 @@ function(input, output) {
         #pr=round(predict(svm.l,new,type="prob")$Y,2)
         cat("The case has a ",pr," chance of having Coronary Artery Disease.")
         #paste0(pr)
-
-        
         
       }
       #This is for if there is an input file. Check for no entry with is.na()
