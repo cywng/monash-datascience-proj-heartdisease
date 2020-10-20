@@ -1,5 +1,6 @@
 library(shiny)
 library(Hmisc)
+library(kernlab)
 library
 load(file = "svm_linear.RData")
 load(file = "svm_train_data.RData")
