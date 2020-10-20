@@ -1,6 +1,9 @@
 library(stringr)
 library(shinytest)
 library(testthat)
+library(here)
+load((here(file ="website/FIT3164team1cadprediction/svm_linear.Rdata")))
+load((here(file ="website/FIT3164team1cadprediction/svm_train_data.Rdata")))
 context("Test Shiny app")
 app <- shinytest::ShinyDriver$new("~/monash-datascience-proj-heartdisease/website/FIT3164team1cadprediction/")
 
@@ -19,11 +22,17 @@ test_that("output is correct", {
   } 
   num<-as.numeric(numextract(a))
   if(num>=0.5){
-    result<-"Y"
+    result<-"Cad"
   }else{
-    result<-"N"
+    result<-"Normal"
   }
-  expect_equal(result,"Y") 
+  a<-data.frame("Typical.Chest.Pain"=as.factor(0),"Age"=53,
+                "Atypical"="N","FBS"=90,"HTN"=as.factor(1),
+                "DM"=as.factor(0),"EF.TTE"=50, "K"=4.7,BP=110,ESR=7, 
+                "TG"=250,"Region.RWMA"=as.factor(0))
+  pred<-predict(svm.l,a)
+  a<-paste0("",pred)
+  expect_equal(result,a) 
   
 }
 )
