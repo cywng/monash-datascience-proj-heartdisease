@@ -655,3 +655,58 @@ legend("bottomright", legend = c("svm.poly","svm.rad", "svm.l", "Random Forest",
        col = c("#C0392B", "#E74C3C", "#D35400", "#9B59B6", "#8E44AD", "#2980B9", "#3498DB", "#1ABC9C", "#16A085", "#27AE60", "#2ECC71", 
                "#F1C40F", "#F39C12"),lwd = 2, cex = 0.8)
 ```
+# 5 Combining the models
+```{r}
+# generate a dataframe that contains the prediction results of all models
+generate_ensemble_df <- function(caddataset){
+  #Input: caddataset - the training dataset
+  #Output: a data frame of size (nrow x 12). Each feature (column) is comprised of the predictions made by that specific model, in probabilities.
+  #Runtime: Linear
+  
+  aggregate_pred.df <- as.data.frame(caddataset$Cath)
+  colnames(aggregate_pred.df)=c("Cath")
+  #attach predictions
+  aggregate_pred.df$knnres <-  predict(knn, caddataset, type = "prob")$Cad
+  aggregate_pred.df$ldares <-  predict(lda, caddataset, type = "prob")$Cad
+  aggregate_pred.df$lrres <-  predict(lr, caddataset, type = "prob")$Cad
+  aggregate_pred.df$rfres <-  predict(rf, caddataset, type = "prob")$Cad
+  aggregate_pred.df$svmLres <-  predict(svm.l, caddataset, type = "prob")$Cad
+  aggregate_pred.df$svmPres <-  predict(svm.poly, caddataset, type = "prob")$Cad
+  aggregate_pred.df$svmRres <-  predict(svm.rad, caddataset, type = "prob")$Cad
+  aggregate_pred.df$NNres <-  predict(nn, caddataset, type = "prob")$Cad
+  aggregate_pred.df$GBMres <-  predict(gbm, caddataset, type = "prob")$Cad
+  aggregate_pred.df$AdaBres <-  predict(adaB, caddataset, type = "prob")$Cad
+  aggregate_pred.df$dtres <-  predict(dt, caddataset, type = "prob")$Cad
+  aggregate_pred.df$blrres <-  predict(blr, caddataset, type = "prob")$Cad
+  return(aggregate_pred.df)
+}
+```
+## 5.1 Naive Voting Ensemble
+```{r}
+vote_ensemble <- function(dataset, label="Cath"){
+  #Input: dataset - Any data set. 
+  #Input label - A column name to predict values for.
+  #Output: a vector containing the average value of all features for each input row.
+  #Converts Y or N in input df to 1 and 0 respectively.
+  #To be used to take a unweighted vote of columns, aka. vote ensembling when combined with generate_ensemble_df
+  
+  df = dataset[,names(dataset) != c(label)]
+  num = dim(df)[2]
+  vote = apply(df, 1, function(x) sum(as.numeric(x)))/num
+  return(as.factor(ifelse(round(vote) == 0,"N","Y")))
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
