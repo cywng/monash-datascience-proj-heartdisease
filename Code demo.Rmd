@@ -1,29 +1,34 @@
 ---
-title: "Code Demo"
-author: "Yupeng Miao"
+title: "Code Report Part 1: Model Training"
+author: "Team 1"
 date: "2020/10/14"
 output:
   pdf_document: default
-  html_document: default
+  toc: true
+  toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
 ```
 
 ```{r message=FALSE}
 library(ggplot2)
 library(caret)
 library(xlsx)
+library(pROC)
 ```
-
-# Load the dataset (No NA entry)
+# 1.0 Data Wrangling
+## 1.01 Introduction to the dataset
+###The data set we used for model training is the Z-Alizadeh Sani Data Set, which is collected for CAD diagnosis and published on the UCI Machine Learning Repository. This data set contains 303 observations and 56 features with no NA or missing value. 
+## 1.02 Load the dataset (No NA entry)
 ```{r}
 cad <- read.xlsx("DataWrangling/Z-Alizadeh sani dataset.xlsx", 1, header=TRUE)
-head(cad)
 ```
-# 1 Data Wrangling
-## 1.1 Factorising variables in character
+## 1.03 Factorising variables in character
+###The categorical features in the original data set is in character format after first reading into R, we need to convert them into factors for the classification. 
 ```{r}
 for (i in 1:length(cad)) {
   if (class(cad[,i]) == "character"){
@@ -35,23 +40,23 @@ for (i in 1:length(cad)) {
 }
 str(cad)
 ```
-### We observe that the feature Exertional CP only has one level, so we drop it from the dataset
+###[NOTE] We observe that the feature "Exertional CP" only has one level, so we drop it from the data set, since it contains no useful information and the classifier training with ROC cannot generate probabilities for categorical feature with only one level.
 ```{r}
 cad <- subset(cad, select = -Exertional.CP)
 ```
-## set up the dataset for svm
+### When we train the model with metric ROC, the one-hot encoding process is embedded within the training process, so we need to set up another data set with no one-hot encoding. This data set will also following the same wrangling procedure as the other one to make sure these two data sets are consistent and contain the same features.
 ```{r}
 svm.df <- cad
 ```
 
-## 1.2 Catrgorical Random Variables: One-Hot Encoding
+## 1.04 Catrgorical Random Variables: One-Hot Encoding
+### The data set after one-hot encoding will contain 97 columns.
 ```{r}
 dummy <- dummyVars(" ~ .", data = cad)
 cad <- data.frame(predict(dummy, newdata = cad))
-head(cad)
 ```
-
-## 1.3 Remove Zero Variance or Near-zero variance variable
+## 1.05 Remove Zero Variance or Near-zero variance variable
+### We first examine the two data set whether they have columns with zero variance or near-zero variance (i.e. imbalanced features).
 ```{r}
 nz <- nearZeroVar(cad, saveMetrics = TRUE)
 nz[nz$nzv,]
@@ -59,17 +64,14 @@ nz.svm <- nearZeroVar(svm.df, saveMetrics = T)
 nz.svm[nz.svm$nzv,]
 ```
 
-### There are 32 near-zero-variance features which may cause problems when the data are split into cross validation or boostraping samples, we eliminated those features.
+### There are 32 near-zero-variance features which may cause problems when the data are split into cross validation or boostraping samples (lead to samples with features only have one level), we eliminated those features.
 ```{r}
 nzv <- nearZeroVar(cad)
 cad <- cad[,-nzv]
 nzv.svm <- nearZeroVar(svm.df)
 svm.df <- svm.df[,-nzv.svm]
-str(cad)
-str(svm.df)
 ```
-
-## 1.4 Remove Correlated predictors
+## 1.06 Remove Correlated predictors
 ```{r}
 cad_cor <- cor(cad)
 high.cor <- sum(abs(cad_cor[upper.tri(cad_cor)])>0.999)
@@ -102,7 +104,6 @@ for (i in 1:length(cad)) {
     cad[,i] <- as.factor(cad[,i]) 
   }
 }
-str(cad)
 ```
 
 # 2 Train/Test split:
@@ -114,7 +115,7 @@ cad.train <- cad[train.index,]
 cad.test <- cad[-train.index,]
 ```
 
-# 3 Set up 10-cross-validation
+# 3 Set up 10-fold-cross-validation
 ```{r}
 parameters = trainControl(method = "repeatedcv", 
                           number = 10, 
@@ -148,10 +149,11 @@ im.test <- im[-train.index,]
 ```
 ```{r}
 svm.df <- subset(svm.df, select = c(Age, DM, HTN, BP, Typical.Chest.Pain, Atypical, FBS, TG, ESR, K, EF.TTE, Region.RWMA, Cath))
+str(svm.df)
 ```
 
 # 3 Claasifier Training and Testing
-## 3.1 Initialising training settings
+## 3.0 Initialising training settings
 ```{r}
 # set up results table
 result = data.frame(Classifier = c("SVM.Poly", "SVM.Radial", "SVM.Linear", "Random Forest", "Neurual Network", "Naive Bayes", "Logistic Regression", "LDA", "KNN", "GBM", "Decision Tree","AdaBoost Classification Tree", "Boosted Logistic Regression"), Training_ROC = 0:12, Testing_Accuracy = 0:12, Test_AUC = 0:12)
@@ -172,8 +174,7 @@ svm.train <- svm.df[train.index.svm,]
 svm.test <- svm.df[-train.index.svm,]
 ```
 
-# 3.2 SVM
-## 3.2.1 SVM Polynomial
+## 3.1 SVM Polynomial
 ```{r}
 set.seed(3164)
 # Train SVM polynomial with ROC metric
@@ -217,7 +218,7 @@ result$ROC[1] = max(svm.poly$results$ROC)
 result$Testing_Accuracy[1] = cm.svm.poly$overall[1]
 ```
 
-## 3.2.2 SVM Radial
+## 3.2 SVM Radial
 ```{r}
 set.seed(3164)
 # Train SVM Radial
@@ -242,7 +243,7 @@ result$ROC[2] = max(svm.rad$results$ROC)
 result$Testing_Accuracy[2] = cm.svm.rad$overall[1]
 ```
 
-## 3.2.3 SVM linear
+## 3.3 SVM linear
 ```{r}
 set.seed(3164)
 # Train SVM linear
@@ -297,7 +298,7 @@ result$Test_AUC[2] = svm.rad.ROC$auc
 result$Test_AUC[3] = svm.l.ROC$auc
 ```
 
-#3.4 Random Forest
+## 3.4 Random Forest
 ```{r}
 # train the random forest
 rf <- train(Cath ~., data = svm.train,
@@ -329,7 +330,7 @@ rf.ROC = roc(response = svm.test$Cath,
               percent = T)
 result$Test_AUC[4] = rf.ROC$auc
 ```
-3.5 Neural Network
+## 3.5 Neural Network
 ```{r}
 # train the neural network
 cath_index = grep("Cath", colnames(svm.train))
@@ -365,7 +366,7 @@ nn.ROC = roc(response = svm.test$Cath,
               percent = T)
 result$Test_AUC[5] = nn.ROC$auc
 ```
-3.6 Naive Bayes
+## 3.6 Naive Bayes
 ```{r message = FALSE}
 set.seed(3164)
 # train Naive Bayes
@@ -398,7 +399,7 @@ nb.ROC = roc(response = svm.test$Cath,
 result$Test_AUC[6] = nb.ROC$auc
 ```
 
-# 3.7 Logistic Regression
+## 3.7 Logistic Regression
 ```{r}
 set.seed(3164)
 # train the logistic regression
@@ -432,7 +433,7 @@ lr.ROC = roc(response = svm.test$Cath,
 result$Test_AUC[7] = lr.ROC$auc
 ```
 
-# 3.8 LDA
+## 3.8 LDA
 ```{r}
 set.seed(3164)
 # train the LDA
@@ -464,7 +465,7 @@ lda.ROC = roc(response = svm.test$Cath,
               percent = T)
 result$Test_AUC[8] = lda.ROC$auc
 ```
-3.8 KNN
+## 3.9 KNN
 ```{r}
 set.seed(3164)
 # train the knn
@@ -496,7 +497,7 @@ knn.ROC = roc(response = svm.test$Cath,
               percent = T)
 result$Test_AUC[9] = knn.ROC$auc
 ```
-3.10 GBM
+## 3.10 GBM
 ```{r}
 set.seed(3164)
 # train the GBM
@@ -529,7 +530,7 @@ gbm.ROC = roc(response = svm.test$Cath,
               percent = T)
 result$Test_AUC[10] = gbm.ROC$auc
 ```
-# Decision Tree
+## 3.11 Decision Tree
 ```{r message=FALSE}
 set.seed(3164)
 # train the decision tree
@@ -562,7 +563,7 @@ dt.ROC = roc(response = svm.test$Cath,
               percent = T)
 result$Test_AUC[11] = dt.ROC$auc
 ```
-# 3.12 AdaBoost Classification tree
+## 3.12 AdaBoost Classification tree
 ```{r}
 set.seed(3164)
 # train adaBoost Classification Tree
@@ -595,7 +596,7 @@ adab.ROC = roc(response = svm.test$Cath,
               percent = T)
 result$Test_AUC[12] = adab.ROC$auc
 ```
-# 3.12 Boosted Logistic Regression
+## 3.13 Boosted Logistic Regression
 ```{r}
 set.seed(3164)
 # train Boosted Logistic Regression
@@ -629,7 +630,7 @@ blr.ROC = roc(response = svm.test$Cath,
               percent = T)
 result$Test_AUC[13] = blr.ROC$auc
 ```
-4 Review the Results and Plotting the ROC
+# 4 Review the Results and Plotting the ROC
 ```{r}
 # view the results
 print(result)
@@ -693,11 +694,60 @@ vote_ensemble <- function(dataset, label="Cath"){
   df = dataset[,names(dataset) != c(label)]
   num = dim(df)[2]
   vote = apply(df, 1, function(x) sum(as.numeric(x)))/num
-  return(as.factor(ifelse(round(vote) == 0,"N","Y")))
+  return(as.factor(ifelse(round(vote) == 0,"Normal","Cad")))
 }
 ```
 
+```{r}
+ensem_result <- vote_ensemble(generate_ensemble_df(svm.train))
+confusionMatrix(ensem_result,svm.train$Cath)
 
+ensem_result_test <- vote_ensemble(generate_ensemble_df(svm.test))
+confusionMatrix(ensem_result_test,svm.test$Cath)
+```
+## 5.2 Train logistic regression on result
+```{r}
+set.seed(3164)
+ensem_train <- generate_ensemble_df(svm.train)
+ensem_test <- generate_ensemble_df(svm.test)
+
+# set up 10 cross validation
+control <- trainControl(method="repeatedcv",
+                        number=10,
+                        classProbs = TRUE,
+                        summaryFunction = twoClassSummary)
+
+# train logistic regression on result
+lr_ensem<-train(Cath ~., data = ensem_train, 
+                method="glm", 
+                family = "binomial",
+                trControl=control,
+                metric = "ROC")
+
+# testing the logistic regression model
+ensem_lr_test=predict(lr_ensem, ensem_test)
+cm.lr_ensem = confusionMatrix(ensem_lr_test, svm.test$Cath)
+cm.lr_ensem
+```
+```{r}
+# ROC and Testing accuracy to the results table
+cat("The training ROC is:", lr_ensem$results$ROC,"\n")
+cat("The Testing Accuracy is:", cm.lr_ensem$overall[1], "\n")
+
+# Save the testing ROC for plotting later
+lr.ensem.probs = predict(lr_ensem, ensem_test[,2:length(ensem_test)],type = "prob")
+lr.ensem.ROC = roc(response = svm.test$Cath,
+              predictor = lr.ensem.probs$Cad,
+              levels = levels(svm.test$Cath),
+              percent = T)
+cat("The test AUC is: ", as.character(lr.ensem.ROC$auc))
+```
+
+
+```{r}
+# Plot the Testing ROC curve
+plot(lr.ensem.ROC,type = "S",col = "#2980B9")
+```
 
 
 
