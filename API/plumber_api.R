@@ -43,6 +43,7 @@ function(req){
 #' @response 200 Returns the class (Y or N) prediction from the LDA model; Y = Coronary Artery Disease
 calculate_prediction <- function(Typical.Chest.Pain, Age, Atypical, FBS, HTN, DM, EF.TTE, K, ESR, TG, Region.RWMA, BP) {
   Atypical <- ifelse(Atypical==1,"Y","N")
+  #Makes a prediction on the input parameters using the SVM model.
   
   # make data frame from parameters
   input_data_num <<- data.frame(Age, FBS, EF.TTE, K, ESR, TG, BP, stringsAsFactors = FALSE)
